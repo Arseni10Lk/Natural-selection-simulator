@@ -79,6 +79,11 @@ class Organism():
         self.sense = 20
 
         # initial direction
+        """
+        all angles are in degrees,
+        measured from the north (positive y) clockwise
+        in short, are azimuthal
+        """
         if self.x == 0:
             self.direction = random.randint(10, 170)
         elif self.y == 0:
