@@ -1,5 +1,6 @@
 import random
 import matplotlib.pyplot as plt
+from math import radians, cos, sin
 
 
 class Environment():
@@ -35,6 +36,17 @@ class Environment():
             self.population.append(Organism(self))
 
     def get_organism_positions(self, population_size):
+
+        for n in range(0, population_size):
+            self.organism_pos.append([self.population[n].x, self.population[n].y])
+            self.organism_x.append(self.population[n].x)
+            self.organism_y.append(self.population[n].y)
+
+    def update_organism_positions(self, population_size):
+
+        self.organism_pos.clear()
+        self.organism_x.clear()
+        self.organism_y.clear()
 
         for n in range(0, population_size):
             self.organism_pos.append([self.population[n].x, self.population[n].y])
@@ -93,7 +105,18 @@ class Organism():
         elif self.y == env.width:
             self.direction = random.randint(100, 260)
 
+    def move(self):
 
-new_env = Environment()
+        # new location
+        self.x += self.speed*sin(radians(self.direction))
+        self.y += self.speed*cos(radians(self.direction))
 
+        # new direction
+        self.direction += random.randint(-5, 5)
+
+
+new_env = Environment(50)
+for x in range(50):
+    new_env.population[x].move()
+new_env.update_organism_positions(50)
 new_env.plot_environment()
