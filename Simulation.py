@@ -5,6 +5,9 @@ from math import radians, cos, sin
 
 class Environment():
     def __init__(self, population_size=10):
+
+        self.population_size = population_size
+
         # size
         self.length = 1000  # x
         self.width = 500  # y
@@ -22,33 +25,35 @@ class Environment():
 
         # population
         self.population = []
-        self.create_population(population_size)
+        self.create_population()
 
         # organism positions
         self.organism_pos = []
         self.organism_x = []
         self.organism_y = []
-        self.get_organism_positions(population_size)
+        self.get_organism_positions()
 
-    def create_population(self, population_size):
+    def create_population(self):
 
-        for _ in range(0, population_size):
+        for _ in range(self.population_size):
             self.population.append(Organism(self))
 
-    def get_organism_positions(self, population_size):
+    def get_organism_positions(self):
 
-        for n in range(0, population_size):
+        for n in range(self.population_size):
             self.organism_pos.append([self.population[n].x, self.population[n].y])
             self.organism_x.append(self.population[n].x)
             self.organism_y.append(self.population[n].y)
 
-    def update_organism_positions(self, population_size):
+    def update_organism_positions(self):
+
+        [self.population[org_num].move() for org_num in range(self.population_size)]
 
         self.organism_pos.clear()
         self.organism_x.clear()
         self.organism_y.clear()
 
-        for n in range(0, population_size):
+        for n in range(self.population_size):
             self.organism_pos.append([self.population[n].x, self.population[n].y])
             self.organism_x.append(self.population[n].x)
             self.organism_y.append(self.population[n].y)
@@ -105,18 +110,54 @@ class Organism():
         elif self.y == env.width:
             self.direction = random.randint(100, 260)
 
-    def move(self):
+    def step(self):
 
         # new location
-        self.x += self.speed*sin(radians(self.direction))
-        self.y += self.speed*cos(radians(self.direction))
+        self.x += sin(radians(self.direction))
+        self.y += cos(radians(self.direction))
 
         # new direction
-        self.direction += random.randint(-5, 5)
+        self.direction += random.randint(-1, 1)
+
+        # make sure that nobody can leave the map
+        if self.x < 0:
+            self.x = 0
+        elif self.x > self.env.length:
+            self.x = self.env.length
+
+        if self.y < 0:
+            self.y = 0
+        elif self.y > self.env.width:
+            self.y = self.env.width
+
+    def eat(self):
+
+        for food_num in range(len(self.env.food_pos)-1):
+            if abs(self.env.food_y[food_num] - self.y) <= 1:
+                if abs(self.env.food_x[food_num] - self.x) <= 1:
+
+                    self.food += 1
+                    # removing it from the map
+                    self.env.food_x.remove(self.env.food_x[food_num])
+                    self.env.food_y.remove(self.env.food_y[food_num])
+                    self.env.food_pos.remove(self.env.food_pos[food_num])
+
+    def move(self):
+
+        for step in range(self.speed):
+            # change location
+            self.step()
+            # forage for food
+            self.eat()
 
 
 new_env = Environment(50)
+
+new_env.update_organism_positions()
+new_env.update_organism_positions()
+new_env.update_organism_positions()
+new_env.update_organism_positions()
+new_env.update_organism_positions()
 for x in range(50):
-    new_env.population[x].move()
-new_env.update_organism_positions(50)
+    print(new_env.population[x].__dict__)
 new_env.plot_environment()
