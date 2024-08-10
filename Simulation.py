@@ -18,10 +18,7 @@ class Environment():
         self.food_pos = []
         self.food_x = []
         self.food_y = []
-        for _ in range(0, self.food_num):
-            self.food_pos.append([random.randint(0, self.length), random.randint(0, self.width)])
-            self.food_x.append(random.randint(0, self.length))
-            self.food_y.append(random.randint(0, self.width))
+        self.reset_resources()
 
         # population
         self.population = []
@@ -32,6 +29,9 @@ class Environment():
         self.organism_x = []
         self.organism_y = []
         self.get_organism_positions()
+
+        self.generation = 0
+        self.day_complete = False
 
     def create_population(self):
 
@@ -47,7 +47,7 @@ class Environment():
 
     def update_organism_positions(self):
 
-        [self.population[org_num].move() for org_num in range(self.population_size)]
+        [creature.move() for creature in self.population]
 
         self.organism_pos.clear()
         self.organism_x.clear()
@@ -58,12 +58,58 @@ class Environment():
             self.organism_x.append(self.population[n].x)
             self.organism_y.append(self.population[n].y)
 
+    def run_day(self, day_length=20):
+        [self.update_organism_positions() for _ in range(day_length)]
+        self.day_complete = True
+
     def plot_environment(self):
-        plt.scatter(self.food_x, self.food_y, marker=".", s=1, color="#00C27E")
-        plt.scatter(self.organism_x, self.organism_y, color="#FF9A19")
+
+        plt.scatter(self.food_x, self.food_y, marker=".", s=3, color="#00C27E")
+        plt.scatter(self.organism_x, self.organism_y, s=20, color="#FF9A19")
         plt.xlim(0, self.length)
         plt.ylim(0, self.width)
         plt.show()
+
+    def reset_resources(self):
+
+        self.food_pos.clear()
+        self.food_x.clear()
+        self.food_y.clear()
+
+        for _ in range(self.food_num):
+            self.food_pos.append([random.randint(0, self.length), random.randint(0, self.width)])
+            self.food_x.append(random.randint(0, self.length))
+            self.food_y.append(random.randint(0, self.width))
+
+    def create_new_generation(self):
+
+        self.generation += 1
+
+        for creature in self.population:
+            if creature.food >= 2:
+                self.population.remove(creature)
+                self.population.append(Organism(self))
+                self.population.append(Organism(self))
+                self.population_size += 1
+            if creature.food == 1:
+                self.population.remove(creature)
+                self.population.append(Organism(self))
+            if creature.food == 0:
+                self.population.remove(creature)
+                self.population_size -= 1
+
+        self.reset_resources()
+
+        self.day_complete = False
+
+    def run_simulation(self, generations_number=20, day_length=20):
+        print("Simulation is running ...")
+        while self.generation < generations_number:
+
+            self.run_day(day_length)
+
+            if self.day_complete:
+                self.create_new_generation()
 
 
 class Organism():
@@ -133,8 +179,10 @@ class Organism():
     def eat(self):
 
         for food_num in range(len(self.env.food_pos)-1):
-            if abs(self.env.food_y[food_num] - self.y) <= 1:
-                if abs(self.env.food_x[food_num] - self.x) <= 1:
+            if food_num > len(self.env.food_pos) - 1:
+                continue
+            if abs(self.env.food_y[food_num] - self.y) <= 10:
+                if abs(self.env.food_x[food_num] - self.x) <= 10:
 
                     self.food += 1
                     # removing it from the map
@@ -152,12 +200,7 @@ class Organism():
 
 
 new_env = Environment(50)
-
-new_env.update_organism_positions()
-new_env.update_organism_positions()
-new_env.update_organism_positions()
-new_env.update_organism_positions()
-new_env.update_organism_positions()
-for x in range(50):
+new_env.run_simulation()
+for x in range(new_env.population_size):
     print(new_env.population[x].__dict__)
 new_env.plot_environment()
