@@ -1,19 +1,20 @@
 import random
 import matplotlib.pyplot as plt
 from math import radians, cos, sin
+import time
 
 
 class Environment():
-    def __init__(self, population_size=10):
+    def __init__(self, population_size=10, food_num=100):
 
         self.population_size = population_size
 
         # size
-        self.length = 1000  # x
-        self.width = 500  # y
+        self.length = 500  # x
+        self.width = 250  # y
 
         # food
-        self.food_num = 400
+        self.food_num = food_num
 
         self.food_pos = []
         self.food_x = []
@@ -32,6 +33,8 @@ class Environment():
 
         self.generation = 0
         self.day_complete = False
+
+        self.frames = 0
 
     def create_population(self):
 
@@ -58,17 +61,21 @@ class Environment():
             self.organism_x.append(self.population[n].x)
             self.organism_y.append(self.population[n].y)
 
-    def run_day(self, day_length=20):
-        [self.update_organism_positions() for _ in range(day_length)]
+    def run_day(self, day_length=40):
+        for _ in range(day_length):
+            self.update_organism_positions()
+            self.plot_environment()
         self.day_complete = True
 
     def plot_environment(self):
-
+        plt.cla()
         plt.scatter(self.food_x, self.food_y, marker=".", s=3, color="#00C27E")
         plt.scatter(self.organism_x, self.organism_y, s=20, color="#FF9A19")
         plt.xlim(0, self.length)
         plt.ylim(0, self.width)
-        plt.show()
+        self.frames += 1
+        plt.show(block=False)
+        plt.pause(0.01)
 
     def reset_resources(self):
 
@@ -85,18 +92,26 @@ class Environment():
 
         self.generation += 1
 
+        # identifying survivors
+        survivors = []
+
         for creature in self.population:
+            if creature.food >= 1:
+                survivors.append(creature)
+            if creature.food == 0:
+                self.population_size -= 1
+
+        # creating population based on survivors
+
+        self.population.clear()
+
+        for creature in survivors:
             if creature.food >= 2:
-                self.population.remove(creature)
                 self.population.append(Organism(self))
                 self.population.append(Organism(self))
                 self.population_size += 1
             if creature.food == 1:
-                self.population.remove(creature)
                 self.population.append(Organism(self))
-            if creature.food == 0:
-                self.population.remove(creature)
-                self.population_size -= 1
 
         self.reset_resources()
 
@@ -105,11 +120,20 @@ class Environment():
     def run_simulation(self, generations_number=20, day_length=20):
         print("Simulation is running ...")
         while self.generation < generations_number:
-
+            print(f"day {self.generation}")
+            print(f" initial population {self.population_size}")
+            start_time = time.time()
             self.run_day(day_length)
 
             if self.day_complete:
                 self.create_new_generation()
+
+            end_time = time.time()
+            fps = self.frames/(end_time-start_time)
+            self.frames = 0
+
+            print(f" average frame rate {fps}")
+            print(f" final population {self.population_size}")
 
 
 class Organism():
@@ -137,7 +161,7 @@ class Organism():
 
         self.food = 0
 
-        self.speed = 5
+        self.speed = 7
         self.size = 5
         self.sense = 20
 
@@ -163,7 +187,7 @@ class Organism():
         self.y += cos(radians(self.direction))
 
         # new direction
-        self.direction += random.randint(-1, 1)
+        self.direction += random.randint(-10, 10)
 
         # make sure that nobody can leave the map
         if self.x < 0:
@@ -181,8 +205,8 @@ class Organism():
         for food_num in range(len(self.env.food_pos)-1):
             if food_num > len(self.env.food_pos) - 1:
                 continue
-            if abs(self.env.food_y[food_num] - self.y) <= 10:
-                if abs(self.env.food_x[food_num] - self.x) <= 10:
+            if abs(self.env.food_y[food_num] - self.y) <= 7:
+                if abs(self.env.food_x[food_num] - self.x) <= 7:
 
                     self.food += 1
                     # removing it from the map
