@@ -210,9 +210,9 @@ class Organism():
 
                     self.food += 1
                     # removing it from the map
-                    self.env.food_x.remove(self.env.food_x[food_num])
-                    self.env.food_y.remove(self.env.food_y[food_num])
-                    self.env.food_pos.remove(self.env.food_pos[food_num])
+                    self.env.food_x.pop(food_num)
+                    self.env.food_y.pop(food_num)
+                    self.env.food_pos.pop(food_num)
 
     def move(self):
 
