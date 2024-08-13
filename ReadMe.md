@@ -17,7 +17,8 @@ This is repeated for a certain number of days.
 
 Example of a simulation in a current version: 
 
-https://github.com/user-attachments/assets/5ddee565-3994-4176-90d5-ad77bc413c42
+https://github.com/user-attachments/assets/301a3c99-8a0d-466f-8212-313afe5202f6
+
 
 The initial data used for simulation:
 Parameter | Value
