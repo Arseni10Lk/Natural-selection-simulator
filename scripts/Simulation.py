@@ -1,11 +1,10 @@
 import random
-import matplotlib.pyplot as plt
 from math import radians, cos, sin
-import time
+from visualization import plot_environment
 
 
 class Environment():
-    def __init__(self, population_size=10, food_num=100):
+    def __init__(self, population_size=10, food_num=100, plot_environment_=True):
 
         self.population_size = population_size
 
@@ -34,7 +33,10 @@ class Environment():
         self.generation = 0
         self.day_complete = False
 
+        self.plot_environment_ = plot_environment_
         self.frames = 0
+        self.start_time = 0
+        self.end_time = 0
 
     def create_population(self):
 
@@ -64,18 +66,9 @@ class Environment():
     def run_day(self, day_length=40):
         for _ in range(day_length):
             self.update_organism_positions()
-            self.plot_environment()
+            if self.plot_environment_:
+                plot_environment(self, show_framerate=True)
         self.day_complete = True
-
-    def plot_environment(self):
-        plt.cla()
-        plt.scatter(self.food_x, self.food_y, marker=".", s=3, color="#00C27E")
-        plt.scatter(self.organism_x, self.organism_y, s=20, color="#FF9A19")
-        plt.xlim(0, self.length)
-        plt.ylim(0, self.width)
-        self.frames += 1
-        plt.show(block=False)
-        plt.pause(0.01)
 
     def reset_resources(self):
 
@@ -122,17 +115,12 @@ class Environment():
         while self.generation < generations_number:
             print(f"day {self.generation}")
             print(f" initial population {self.population_size}")
-            start_time = time.time()
+
             self.run_day(day_length)
 
             if self.day_complete:
                 self.create_new_generation()
 
-            end_time = time.time()
-            fps = self.frames/(end_time-start_time)
-            self.frames = 0
-
-            print(f" average frame rate {fps}")
             print(f" final population {self.population_size}")
 
 
@@ -221,10 +209,3 @@ class Organism():
             self.step()
             # forage for food
             self.eat()
-
-
-new_env = Environment(50)
-new_env.run_simulation()
-for x in range(new_env.population_size):
-    print(new_env.population[x].__dict__)
-new_env.plot_environment()
