@@ -15,9 +15,9 @@ If the organsim manages to consume
   
 This is repeated for a certain number of days.
 
-Example of a simulation in a current version: 
+Example of a simulation in a current or recent version: 
 
-https://github.com/user-attachments/assets/d2861385-b0f0-462b-a2ba-2d3608251393
+https://github.com/user-attachments/assets/e6408fa3-eec7-4b31-80d6-6f3fa1a341b6
 
 The initial data used for simulation:
 Parameter | Value
