@@ -1,4 +1,4 @@
-from Simulation import Environment
+from Simulator.Simulation import Environment
 
 
 def main():

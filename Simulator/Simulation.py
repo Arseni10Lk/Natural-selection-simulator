@@ -1,6 +1,6 @@
 import random
 from math import radians, cos, sin
-from visualization import plot_environment
+from Simulator.visualization import plot_environment
 
 
 class Environment():
