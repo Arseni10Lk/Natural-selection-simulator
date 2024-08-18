@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import time
+from Simulator.__init__ import version
 
 
 def plot_environment(env, show_framerate=False):
@@ -9,12 +10,13 @@ def plot_environment(env, show_framerate=False):
     plt.xlim(0, env.length)
     plt.ylim(0, env.width)
     env.frames += 1
+    plt.subplots_adjust(right=0.85)
+    font = {
+        "size": 7
+    }
+    plt.text(1.05 * env.length, 0, "v. " + version, fontdict=font)
     if show_framerate:
 
-        plt.subplots_adjust(right=0.85)
-        font = {
-            "size": 7
-        }
         env.end_time = time.time()
         if env.start_time != 0:
             fps = env.frames / (env.end_time - env.start_time)
