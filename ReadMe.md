@@ -17,8 +17,7 @@ This is repeated for a certain number of days.
 
 Example of a simulation in a current version: 
 
-https://github.com/user-attachments/assets/301a3c99-8a0d-466f-8212-313afe5202f6
-
+https://github.com/user-attachments/assets/d2861385-b0f0-462b-a2ba-2d3608251393
 
 The initial data used for simulation:
 Parameter | Value
@@ -38,7 +37,6 @@ The next update will most likely include plotting population statistics.
 
 Feature name | Description | Status
 -----|---------|:-----:
-Separate file for visualiations mehtods | Everything related to visualisation should be moved to a different python file. | In progress
 Video rendering | To allow for stable frame rate which is comfortable for the observer in case of big simulations. The data should be saved as a result of simulation and then played without any additional calculations
 Matplotlib graphics | Implementeed as an animated plot, not very pleasant to watch but clear and easy to work with. | In progress
 Mutations | Traits from survivors of one generation are inherited by their children with a certain mutation range.
@@ -48,3 +46,4 @@ Prey/hunter concept | Some creatures can eat others while others can eat "usual"
 Pygame graphics | The main simulation visualisation should be moved from `matplotlib` to `pygame`. Textures can be added to make the simulation more pleasant to watch.
 Behavioral evolution | Has 2 potential imlementation options. More complicated option is to include neural network and that would allow to simulate group behaviour and escape strategies.
 Sexual dimorphism | The fact that male and female organisms of the same species have slightly different look and adaptations. Would allow to simulate handicap principle if implemented.
+Separate file for visualiations mehtods | Everything related to visualisation should be moved to a different python file. | Done
