@@ -1,6 +1,6 @@
 import random
 from math import radians, cos, sin
-from Simulator.visualization import plot_environment
+from Simulator.visualization import plot_environment, graph_populaiton, Visualisation
 
 
 class Environment():
@@ -37,6 +37,10 @@ class Environment():
         self.frames = 0
         self.start_time = 0
         self.end_time = 0
+        self.population_history = []
+        self.population_history.append(population_size)
+
+        self.visualisation = Visualisation(self)
 
     def create_population(self):
 
@@ -67,7 +71,7 @@ class Environment():
         for _ in range(day_length):
             self.update_organism_positions()
             if self.plot_environment_:
-                plot_environment(self, show_framerate=True)
+                self.visualisation.plot_environment(show_framerate=True)
         self.day_complete = True
 
     def reset_resources(self):
@@ -120,6 +124,8 @@ class Environment():
 
             if self.day_complete:
                 self.create_new_generation()
+                self.population_history.append(self.population_size)
+                self.visualisation.graph_population()
 
             print(f" final population {self.population_size}")
 
