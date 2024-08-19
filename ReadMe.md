@@ -6,9 +6,9 @@ Currently, the simulation is running and the first visualisation was added. Righ
 
 The rules are as follows:
 At first food is randomly distributed all over the map. Its amount can be changed from simulation to simulation.
-The orgamisms are then loaded along the edges of the map, their positions are also random, each has random direction.
+The organisms are then loaded along the edges of the map, their positions are also random, each has random direction.
 As the simulation starts the organisms start moving with the pre-set speed while randomly changing direction.
-If the organsim manages to consume
+If the organism manages to consume
 * 2 or more food items, then instead of it 2 organisms will appear next day. In other words, it reproduces.
 * 1 food item, then it survives.
 * 0 food items, then it dies and does not go to the next day.
@@ -17,7 +17,7 @@ This is repeated for a certain number of days.
 
 Example of a simulation in a current or recent version: 
 
-https://github.com/user-attachments/assets/e6408fa3-eec7-4b31-80d6-6f3fa1a341b6
+https://github.com/user-attachments/assets/9e2d8733-63a4-49d1-89e8-cb675c6a4a84
 
 The initial data used for simulation:
 Parameter | Value
