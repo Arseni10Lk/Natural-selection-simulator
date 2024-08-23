@@ -1,6 +1,6 @@
 import random
 from math import radians, cos, sin
-from Simulator.visualization import plot_environment, graph_populaiton, Visualisation
+from Simulator.visualization import Visualisation
 
 
 class Environment():
@@ -34,11 +34,6 @@ class Environment():
         self.day_complete = False
 
         self.plot_environment_ = plot_environment_
-        self.frames = 0
-        self.start_time = 0
-        self.end_time = 0
-        self.population_history = []
-        self.population_history.append(population_size)
 
         self.visualisation = Visualisation(self)
 
@@ -67,11 +62,12 @@ class Environment():
             self.organism_x.append(self.population[n].x)
             self.organism_y.append(self.population[n].y)
 
-    def run_day(self, day_length=40):
+    def run_day(self, show_framerate, day_length=40):
         for _ in range(day_length):
             self.update_organism_positions()
             if self.plot_environment_:
-                self.visualisation.plot_environment(show_framerate=True)
+                self.visualisation.plot_environment()
+                self.visualisation.display_figure(show_framerate=show_framerate)
         self.day_complete = True
 
     def reset_resources(self):
@@ -114,17 +110,16 @@ class Environment():
 
         self.day_complete = False
 
-    def run_simulation(self, generations_number=20, day_length=20):
+    def run_simulation(self, show_framerate=False, generations_number=20, day_length=20):
         print("Simulation is running ...")
         while self.generation < generations_number:
             print(f"day {self.generation}")
             print(f" initial population {self.population_size}")
 
-            self.run_day(day_length)
+            self.run_day(True, day_length)
 
             if self.day_complete:
                 self.create_new_generation()
-                self.population_history.append(self.population_size)
                 self.visualisation.graph_population()
 
             print(f" final population {self.population_size}")
