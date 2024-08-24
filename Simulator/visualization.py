@@ -1,20 +1,23 @@
 import matplotlib.pyplot as plt
-import numpy
 from matplotlib.ticker import MaxNLocator
 import time
 from Simulator.__init__ import version
 
 
 class Visualisation():
-    def __init__(self, env, plot_environment_=True, graph_population_=True):
-        self.plot_environment_ = plot_environment_
-        self.graph_population_ = graph_population_
+    def __init__(self, env):
+
         self.env = env
+
+        self.plot_environment_ = self.env.plot_environment_
+        self.graph_population_ = self.env.graph_population
+        self.multiple_runs = self.env.multiple_runs
 
         self.start_time = 0
         self.end_time = 0
 
         self.population_history = [self.env.population_size]
+        self.past_population_history = [self.population_history]
 
         self.figure = plt.figure(figsize=(9, 6), layout='constrained')
 
@@ -49,23 +52,41 @@ class Visualisation():
 
     def graph_population(self):
         if self.graph_population_:
+            self.population_history = self.past_population_history[self.env.run_num]
             self.population_history.append(self.env.population_size)
 
-            self.population_stat.cla()
+            if not self.multiple_runs:
+                self.population_stat.cla()
             self.population_stat.yaxis.set_major_locator(MaxNLocator(integer=True))
             self.population_stat.xaxis.set_major_locator(MaxNLocator(integer=True))
             self.population_stat.set_ylim(0, self.population_history[0] + 20)
-            self.population_stat.yaxis.set_ticks(range(0, self.population_history[0] + 20, 10))
-            self.population_stat.set_xlim(0, self.env.generation)
+            self.population_stat.yaxis.set_ticks(range(0, self.population_history[0] + 20, 5))
+            if not self.multiple_runs:
+                self.population_stat.set_xlim(0, self.env.generation)
+            elif self.multiple_runs:
+                self.population_stat.set_xlim(0, self.env.generations_number)
             self.population_stat.set_xlabel("generation")
             self.population_stat.set_ylabel("population")
-            self.population_stat.plot(self.population_history, linewidth=0.5, color="red")
-            self.population_stat.fill_between(
-                range(self.env.generation + 1),
-                self.population_history,
-                color="red",
-                alpha=0.3
-            )
+            if self.env.generation > 1:
+                self.population_stat.lines[self.env.run_num].remove()
+            if not self.multiple_runs:
+                self.population_stat.plot(self.population_history, linewidth=0.5, color="red")
+
+            if self.multiple_runs:
+
+                self.population_stat.plot(self.population_history, linewidth=1.5, color="red")
+
+                if self.env.generation == self.env.generations_number:
+                    self.population_stat.lines[self.env.run_num].remove()
+
+                    self.population_stat.plot(self.population_history, linewidth=0.3, color="red")
+            if not self.multiple_runs:
+                self.population_stat.fill_between(
+                    range(self.env.generation + 1),
+                    self.population_history,
+                    color="red",
+                    alpha=0.3
+                    )
             self.population_stat.grid(linewidth=0.2)
         else:
             self.population_stat.set_axis_off()
@@ -83,10 +104,10 @@ class Visualisation():
 
             self.figure.show()
 
-            plt.pause(0.01)
+            plt.pause(0.0001)
 
             txt.remove()
         else:
             self.figure.show()
 
-            plt.pause(0.01)
+            plt.pause(0.0001)

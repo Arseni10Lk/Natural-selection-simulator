@@ -4,9 +4,17 @@ from Simulator.visualization import Visualisation
 
 
 class Environment():
-    def __init__(self, population_size=10, food_num=100, plot_environment_=True, graph_population=True):
+    def __init__(
+            self,
+            population_size=10,
+            food_num=100,
+            multiple_runs=False,
+            plot_environment_=True,
+            graph_population=True
+    ):
 
         self.population_size = population_size
+        self.initial_population = population_size
 
         # size
         self.length = 500  # x
@@ -31,16 +39,16 @@ class Environment():
         self.get_organism_positions()
 
         self.generation = 0
+        self.generations_number = 0
         self.day_complete = False
+
+        self.run_num = 0
+        self.multiple_runs = multiple_runs
 
         self.plot_environment_ = plot_environment_
         self.graph_population = graph_population
 
-        self.visualisation = Visualisation(
-            self,
-            plot_environment_=plot_environment_,
-            graph_population_=graph_population
-        )
+        self.visualisation = Visualisation(self)
 
     def create_population(self):
 
@@ -117,6 +125,7 @@ class Environment():
 
     def run_simulation(self, show_framerate=False, generations_number=20, day_length=20):
         print("Simulation is running ...")
+        self.generations_number = generations_number
         while self.generation < generations_number:
             print(f"day {self.generation}")
             print(f" initial population {self.population_size}")
@@ -133,6 +142,38 @@ class Environment():
                         self.visualisation.display_figure()
 
             print(f" final population {self.population_size}")
+
+    def reset_simulation(self):
+
+        # food
+        self.food_pos = []
+        self.food_x = []
+        self.food_y = []
+        self.reset_resources()
+
+        # population
+        self.population_size = self.initial_population
+        self.population = []
+        self.create_population()
+
+        # organism positions
+        self.organism_pos = []
+        self.organism_x = []
+        self.organism_y = []
+        self.get_organism_positions()
+
+        self.generation = 0
+        self.day_complete = False
+
+        self.visualisation.past_population_history.append([self.initial_population])
+
+    def run_several_times(self, times_=20, generations_number=20, day_length=20):
+        print("Simulation is running")
+        while self.run_num < times_:
+            self.run_simulation(generations_number=generations_number, day_length=day_length)
+            print(self.run_num, self.population_size)
+            self.reset_simulation()
+            self.run_num += 1
 
 
 class Organism():
