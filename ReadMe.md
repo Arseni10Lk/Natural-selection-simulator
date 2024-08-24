@@ -19,6 +19,10 @@ Example of a simulation in a current or recent version:
 
 https://github.com/user-attachments/assets/efbcce7b-476d-4da9-92a0-ed76f220e8f3
 
+And the population of the environment if the simulation is being run 20 times:
+
+https://github.com/user-attachments/assets/74ac0dec-41f9-419c-95eb-0406908dd3c0
+
 The initial data used for simulation:
 Parameter | Value
 --- | :---: 
