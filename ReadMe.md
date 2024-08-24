@@ -17,7 +17,7 @@ This is repeated for a certain number of days.
 
 Example of a simulation in a current or recent version: 
 
-https://github.com/user-attachments/assets/9e2d8733-63a4-49d1-89e8-cb675c6a4a84
+https://github.com/user-attachments/assets/efbcce7b-476d-4da9-92a0-ed76f220e8f3
 
 The initial data used for simulation:
 Parameter | Value
@@ -33,8 +33,7 @@ initial population | 50
 
 At first more visualisations will be made using `matplotlib` library, later it is planned to move to `pygame` while leaving matplotlib for statistics of the simulation.
 
-The next update will most likely include plotting population statistics.
-
+Long-term:
 Feature name | Description | Status
 -----|---------|:-----:
 Video rendering | To allow for stable frame rate which is comfortable for the observer in case of big simulations. The data should be saved as a result of simulation and then played without any additional calculations
@@ -47,3 +46,9 @@ Pygame graphics | The main simulation visualisation should be moved from `matplo
 Behavioral evolution | Has 2 potential imlementation options. More complicated option is to include neural network and that would allow to simulate group behaviour and escape strategies.
 Sexual dimorphism | The fact that male and female organisms of the same species have slightly different look and adaptations. Would allow to simulate handicap principle if implemented.
 Separate file for visualiations mehtods | Everything related to visualisation should be moved to a different python file. | Done
+
+Short-term:
+Feature name | Description 
+-----|---------
+Processing of multiple runs | Make the program process the data from several runs, so that any conclusion can be drawn
+Closing a figure without an error | Process the command of closure
