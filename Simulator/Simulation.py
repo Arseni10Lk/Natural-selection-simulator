@@ -4,7 +4,7 @@ from Simulator.visualization import Visualisation
 
 
 class Environment():
-    def __init__(self, population_size=10, food_num=100, plot_environment_=True):
+    def __init__(self, population_size=10, food_num=100, plot_environment_=True, graph_population=True):
 
         self.population_size = population_size
 
@@ -34,8 +34,13 @@ class Environment():
         self.day_complete = False
 
         self.plot_environment_ = plot_environment_
+        self.graph_population = graph_population
 
-        self.visualisation = Visualisation(self)
+        self.visualisation = Visualisation(
+            self,
+            plot_environment_=plot_environment_,
+            graph_population_=graph_population
+        )
 
     def create_population(self):
 
@@ -116,11 +121,16 @@ class Environment():
             print(f"day {self.generation}")
             print(f" initial population {self.population_size}")
 
-            self.run_day(True, day_length)
+            self.run_day(show_framerate, day_length)
 
             if self.day_complete:
                 self.create_new_generation()
-                self.visualisation.graph_population()
+
+                if self.graph_population:
+                    self.visualisation.graph_population()
+
+                    if not self.plot_environment_:
+                        self.visualisation.display_figure()
 
             print(f" final population {self.population_size}")
 
