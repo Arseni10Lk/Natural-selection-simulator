@@ -127,8 +127,6 @@ class Environment():
         print("Simulation is running ...")
         self.generations_number = generations_number
         while self.generation < generations_number:
-            print(f"day {self.generation}")
-            print(f" initial population {self.population_size}")
 
             self.run_day(show_framerate, day_length)
 
@@ -140,8 +138,6 @@ class Environment():
 
                     if not self.plot_environment_:
                         self.visualisation.display_figure()
-
-            print(f" final population {self.population_size}")
 
     def reset_simulation(self):
 
@@ -171,7 +167,6 @@ class Environment():
         print("Simulation is running")
         while self.run_num < times_:
             self.run_simulation(generations_number=generations_number, day_length=day_length)
-            print(self.run_num, self.population_size)
             self.reset_simulation()
             self.run_num += 1
 

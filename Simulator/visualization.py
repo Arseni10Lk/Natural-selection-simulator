@@ -18,6 +18,7 @@ class Visualisation():
 
         self.population_history = [self.env.population_size]
         self.past_population_history = [self.population_history]
+        self.average_population = []
 
         self.figure = plt.figure(figsize=(9, 6), layout='constrained')
 
@@ -54,6 +55,14 @@ class Visualisation():
         if self.graph_population_:
             self.population_history = self.past_population_history[self.env.run_num]
             self.population_history.append(self.env.population_size)
+            # calculating average population
+            if self.env.run_num == 0:
+                self.average_population = self.population_history.copy()
+            else:
+                summed_population_gen = 0
+                for run in range(self.env.run_num + 1):
+                    summed_population_gen += self.past_population_history[run][self.env.generation]
+                    self.average_population[self.env.generation] = summed_population_gen/(self.env.run_num + 1)
 
             if not self.multiple_runs:
                 self.population_stat.cla()
@@ -67,19 +76,32 @@ class Visualisation():
                 self.population_stat.set_xlim(0, self.env.generations_number)
             self.population_stat.set_xlabel("generation")
             self.population_stat.set_ylabel("population")
+
             if self.env.generation > 1:
                 self.population_stat.lines[self.env.run_num].remove()
+
             if not self.multiple_runs:
                 self.population_stat.plot(self.population_history, linewidth=0.5, color="red")
 
             if self.multiple_runs:
 
-                self.population_stat.plot(self.population_history, linewidth=1.5, color="red")
+                if self.env.run_num == 0:
 
-                if self.env.generation == self.env.generations_number:
-                    self.population_stat.lines[self.env.run_num].remove()
-
+                    if self.env.generation == self.env.generations_number:
+                        self.population_stat.plot(self.population_history, linewidth=0.3, color="red")
+                    else:
+                        self.population_stat.plot(self.population_history, linewidth=2, color="red")
+                elif self.env.run_num == 1:
+                    if self.env.generation > 1:
+                        self.population_stat.lines[self.env.run_num].remove()
                     self.population_stat.plot(self.population_history, linewidth=0.3, color="red")
+                    self.population_stat.plot(self.average_population, linewidth=2, color="red")
+                else:
+                    if self.env.generation > 0:
+                        self.population_stat.lines[self.env.run_num].remove()
+                    self.population_stat.plot(self.population_history, linewidth=0.3, color="red")
+                    self.population_stat.plot(self.average_population, linewidth=2, color="red")
+
             if not self.multiple_runs:
                 self.population_stat.fill_between(
                     range(self.env.generation + 1),
