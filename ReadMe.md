@@ -2,7 +2,7 @@
 
 Some ideas were taken from [the Primer's video on natural selection](https://www.youtube.com/watch?v=0ZGbIKd0XrM). However, this project is planned to include more mechanics while also to have lower quality of visualisation (at least, absence of 3D graphics).
 
-Currently, the simulation is running and the first visualisation was added. Right now it only allows us to find the population which can be sustained by certain food amount. No mutations were added yet.
+Right now the program allows us to find the population which can be sustained by certain food amount. No mutations were added yet.
 
 The rules are as follows:
 At first food is randomly distributed all over the map. Its amount can be changed from simulation to simulation.
@@ -15,23 +15,25 @@ If the organism manages to consume
   
 This is repeated for a certain number of days.
 
-Example of a simulation in a current or recent version: 
+Finally, in v4.0.0 the ability to conduct any meaningful experiments is there. We can calculate the carrying capacity of our simplified ecosystem.
+For example, if we will set the following parameters:
 
-https://github.com/user-attachments/assets/efbcce7b-476d-4da9-92a0-ed76f220e8f3
-
-And the population of the environment if the simulation is being run 20 times:
-
-https://github.com/user-attachments/assets/74ac0dec-41f9-419c-95eb-0406908dd3c0
-
-The initial data used for simulation:
 Parameter | Value
 --- | :---: 
 food amount | 100
-speed | 7
-eating radius | 7
 generations number | 20
 day length | 40
 initial population | 50
+
+and run a simulation once we will get the following: 
+
+https://github.com/user-attachments/assets/efbcce7b-476d-4da9-92a0-ed76f220e8f3
+
+As we can see, the population has fluctuated significantly and while the simulation came to an end with the population of around 40 it is not necessarily the carrying capacity of our mini-world. Since it can be just another fluctuation or just one random outcome. To get the full picture we have to run it several times. Let's say 20:
+
+https://github.com/user-attachments/assets/91ba66bf-6421-417e-871b-e64d4307f05f
+
+Now, we can see that the environment can sustain, on average, the population of around 36-37 organisms, thus the carrying capacity is found.
 
 ## Future development ##
 
@@ -54,5 +56,5 @@ Separate file for visualiations mehtods | Everything related to visualisation sh
 Short-term:
 Feature name | Description 
 -----|---------
-Processing of multiple runs | Make the program process the data from several runs, so that any conclusion can be drawn
 Closing a figure without an error | Process the command of closure
+Adding sensing radius for organisms | This will serve as basis for adding mutations in the future. Also, create slightly more intelligent behaviour for the organisms.
