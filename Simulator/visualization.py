@@ -40,6 +40,8 @@ class Visualisation():
         self.figure.tight_layout(pad=1.5)
         self.textfield.text(0, 0.9, 'v. ' + version)
 
+        self.figure.canvas.mpl_connect('close_event', self.on_close)
+
     def plot_environment(self):
         if self.plot_environment_:
             self.environment_picture.cla()
@@ -124,12 +126,16 @@ class Visualisation():
             self.start_time = time.time()
             txt = self.textfield.text(0, 0.8, f"fps: {fps:.0f}")
 
-            self.figure.show()
+            self.figure.gca()
 
             plt.pause(0.0001)
 
             txt.remove()
         else:
-            self.figure.show()
+            self.figure.gca()
 
             plt.pause(0.0001)
+
+    def on_close(self, event):
+        print("Was closed")
+        self.env.stop = True

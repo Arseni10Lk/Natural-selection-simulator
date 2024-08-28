@@ -49,6 +49,7 @@ class Environment():
         self.graph_population = graph_population
 
         self.visualisation = Visualisation(self)
+        self.stop = False
 
     def create_population(self):
 
@@ -124,20 +125,22 @@ class Environment():
         self.day_complete = False
 
     def run_simulation(self, show_framerate=False, generations_number=20, day_length=20):
-        print("Simulation is running ...")
-        self.generations_number = generations_number
-        while self.generation < generations_number:
+        if not self.stop:
+            if not self.multiple_runs:
+                print("Simulation is running ...")
+            self.generations_number = generations_number
+            while self.generation < generations_number:
 
-            self.run_day(show_framerate, day_length)
+                self.run_day(show_framerate, day_length)
 
-            if self.day_complete:
-                self.create_new_generation()
+                if self.day_complete:
+                    self.create_new_generation()
 
-                if self.graph_population:
-                    self.visualisation.graph_population()
+                    if self.graph_population:
+                        self.visualisation.graph_population()
 
-                    if not self.plot_environment_:
-                        self.visualisation.display_figure()
+                        if not self.plot_environment_:
+                            self.visualisation.display_figure()
 
     def reset_simulation(self):
 
@@ -164,11 +167,12 @@ class Environment():
         self.visualisation.past_population_history.append([self.initial_population])
 
     def run_several_times(self, times_=20, generations_number=20, day_length=20):
-        print("Simulation is running")
-        while self.run_num < times_:
-            self.run_simulation(generations_number=generations_number, day_length=day_length)
-            self.reset_simulation()
-            self.run_num += 1
+        if not self.stop:
+            print("Simulation is running")
+            while self.run_num < times_:
+                self.run_simulation(generations_number=generations_number, day_length=day_length)
+                self.reset_simulation()
+                self.run_num += 1
 
 
 class Organism():
