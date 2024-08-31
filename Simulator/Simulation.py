@@ -10,7 +10,8 @@ class Environment():
             food_num=100,
             multiple_runs=False,
             plot_environment_=True,
-            graph_population=True
+            graph_population=True,
+            delayed_food_reset=True
     ):
 
         self.population_size = population_size
@@ -22,11 +23,15 @@ class Environment():
 
         # food
         self.food_num = food_num
+        self.initial_food = food_num
 
         self.food_pos = []
         self.food_x = []
         self.food_y = []
         self.reset_resources()
+
+        self.consumed_food = 0
+        self.food_history = [self.food_num]
 
         # population
         self.population = []
@@ -47,6 +52,7 @@ class Environment():
 
         self.plot_environment_ = plot_environment_
         self.graph_population = graph_population
+        self.delayed_food_reset = delayed_food_reset
 
         self.visualisation = Visualisation(self)
         self.stop = False
@@ -95,6 +101,40 @@ class Environment():
             self.food_x.append(random.randint(0, self.length))
             self.food_y.append(random.randint(0, self.width))
 
+    def reset_resources_delayed(self):
+        self.food_history.append(self.food_num)
+
+        self.food_pos.clear()
+        self.food_x.clear()
+        self.food_y.clear()
+
+        if self.generation == 1:
+            new_food_count = (self.food_num
+                              - self.consumed_food
+                              )
+        elif self.generation == 2:
+            food_change = 0.4 * self.food_history[self.generation - 1]
+            new_food_count = (self.food_num
+                              - self.consumed_food
+                              + 0.5 * food_change)
+        else:
+            food_change1 = 0.4 * self.food_history[self.generation - 1]
+            food_change2 = 0.4 * self.food_history[self.generation - 2]
+            new_food_count = (
+                    self.food_num
+                    - self.consumed_food
+                    + 0.5 * food_change1
+                    + 0.5 * food_change2
+                    )
+
+        self.food_num = round(new_food_count)
+        self.consumed_food = 0
+
+        for _ in range(self.food_num):
+            self.food_pos.append([random.randint(0, self.length), random.randint(0, self.width)])
+            self.food_x.append(random.randint(0, self.length))
+            self.food_y.append(random.randint(0, self.width))
+
     def create_new_generation(self):
 
         self.generation += 1
@@ -120,7 +160,10 @@ class Environment():
             if creature.food == 1:
                 self.population.append(Organism(self))
 
-        self.reset_resources()
+        if self.delayed_food_reset:
+            self.reset_resources_delayed()
+        else:
+            self.reset_resources()
 
         self.day_complete = False
 
@@ -148,6 +191,8 @@ class Environment():
         self.food_pos = []
         self.food_x = []
         self.food_y = []
+        self.food_num = self.initial_food
+        self.food_history = [self.food_num]
         self.reset_resources()
 
         # population
@@ -246,7 +291,8 @@ class Organism():
                 continue
             if abs(self.env.food_y[food_num] - self.y) <= 7:
                 if abs(self.env.food_x[food_num] - self.x) <= 7:
-
+                    if self.env.delayed_food_reset:
+                        self.env.consumed_food += 1
                     self.food += 1
                     # removing it from the map
                     self.env.food_x.pop(food_num)

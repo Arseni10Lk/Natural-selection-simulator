@@ -70,8 +70,8 @@ class Visualisation():
                 self.population_stat.cla()
             self.population_stat.yaxis.set_major_locator(MaxNLocator(integer=True))
             self.population_stat.xaxis.set_major_locator(MaxNLocator(integer=True))
-            self.population_stat.set_ylim(0, self.population_history[0] + 20)
-            self.population_stat.yaxis.set_ticks(range(0, self.population_history[0] + 20, 5))
+            self.population_stat.set_ylim(0, self.population_history[0] + 40)
+            self.population_stat.yaxis.set_ticks(range(0, self.population_history[0] + 40, 5))
             if not self.multiple_runs:
                 self.population_stat.set_xlim(0, self.env.generation)
             elif self.multiple_runs:
