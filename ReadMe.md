@@ -12,8 +12,8 @@ If the organism manages to consume
 * 2 or more food items, then instead of it 2 organisms will appear next day. In other words, it reproduces.
 * 1 food item, then it survives.
 * 0 food items, then it dies and does not go to the next day.
-  
-This is repeated for a certain number of days.
+
+Amount of food does not recover instantly, for example the amount of food in day 7 depends on the amount of food in days 4 and 5. That adds realism to the way our ecosystem behaves. This is repeated for a certain number of days.
 
 Finally, in v4.0.0 the ability to conduct any meaningful experiments is there. We can calculate the carrying capacity of our simplified ecosystem.
 For example, if we will set the following parameters:
@@ -21,19 +21,19 @@ For example, if we will set the following parameters:
 Parameter | Value
 --- | :---: 
 food amount | 100
-generations number | 20
-day length | 40
+generations number | 60
+day length | 20
 initial population | 50
 
 and run a simulation once we will get the following: 
 
-https://github.com/user-attachments/assets/efbcce7b-476d-4da9-92a0-ed76f220e8f3
+https://github.com/user-attachments/assets/5978b111-5e34-4a82-b3a7-041abb41caf5
 
-As we can see, the population has fluctuated significantly and while the simulation came to an end with the population of around 40 it is not necessarily the carrying capacity of our mini-world. Since it can be just another fluctuation or just one random outcome. To get the full picture we have to run it several times. Let's say 20:
+As we can see, the population has fluctuated significantly and while the simulation came to an end with the population of around 35 it is not necessarily the carrying capacity of our mini-world. Since it can be just another fluctuation or just one random outcome. To get the full picture we have to run it several times. Let's say 20:
 
-https://github.com/user-attachments/assets/91ba66bf-6421-417e-871b-e64d4307f05f
+https://github.com/user-attachments/assets/2e2ca1ba-8446-406b-933d-299484877697
 
-Now, we can see that the environment can sustain, on average, the population of around 36-37 organisms, thus the carrying capacity is found.
+Now, we can see that the environment can sustain, on average, the population of around 35 organisms, thus the carrying capacity is found and the initial guess was randomly correct.
 
 ## Future development ##
 
@@ -43,18 +43,17 @@ Long-term:
 Feature name | Description | Status
 -----|---------|:-----:
 Video rendering | To allow for stable frame rate which is comfortable for the observer in case of big simulations. The data should be saved as a result of simulation and then played without any additional calculations
-Matplotlib graphics | Implementeed as an animated plot, not very pleasant to watch but clear and easy to work with. | In progress
-Mutations | Traits from survivors of one generation are inherited by their children with a certain mutation range.
+Mutations | Traits from survivors of one generation are inherited by their children with a certain mutation range. | In process
 Plants | Act as a food source, are stationary, the growth is stimulated by dying organisms. Later, specific adaptations and species of plants can be added, for example to simulate symbiotic relationship formation.
 Ecosystems | Two ecosystems with the transition zone in-between both having different conditions (so that different genomes survive in different ecosystems)
 Prey/hunter concept | Some creatures can eat others while others can eat "usual" food or plants. Can be used to proove Lotka-Volterra equations (realtionship between the populations of prey and hunters)
 Pygame graphics | The main simulation visualisation should be moved from `matplotlib` to `pygame`. Textures can be added to make the simulation more pleasant to watch.
 Behavioral evolution | Has 2 potential imlementation options. More complicated option is to include neural network and that would allow to simulate group behaviour and escape strategies.
 Sexual dimorphism | The fact that male and female organisms of the same species have slightly different look and adaptations. Would allow to simulate handicap principle if implemented.
+Matplotlib graphics | Implementeed as an animated plot, not very pleasant to watch but clear and easy to work with. | Done
 Separate file for visualiations mehtods | Everything related to visualisation should be moved to a different python file. | Done
 
 Short-term:
 Feature name | Description 
 -----|---------
-Closing a figure without an error | Process the command of closure
 Adding sensing radius for organisms | This will serve as basis for adding mutations in the future. Also, create slightly more intelligent behaviour for the organisms.
