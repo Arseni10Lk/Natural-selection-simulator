@@ -79,11 +79,13 @@ class Visualisation():
             self.population_stat.set_xlabel("generation")
             self.population_stat.set_ylabel("population")
 
+            if not self.multiple_runs:
+                self.population_stat.plot(self.population_history, linewidth=0.5, color="red")
+
             if self.env.generation > 1:
                 self.population_stat.lines[self.env.run_num].remove()
 
-            if not self.multiple_runs:
-                self.population_stat.plot(self.population_history, linewidth=0.5, color="red")
+
 
             if self.multiple_runs:
 
