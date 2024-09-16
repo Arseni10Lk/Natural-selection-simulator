@@ -1,5 +1,5 @@
 import random
-from math import radians, cos, sin
+from math import radians, degrees, cos, sin, atan, sqrt
 from Simulator.visualization import Visualisation
 
 
@@ -7,7 +7,7 @@ class Environment():
     def __init__(
             self,
             population_size=10,
-            food_num=100,
+            food_num=15,
             multiple_runs=False,
             plot_environment_=True,
             graph_population=True,
@@ -97,9 +97,9 @@ class Environment():
         self.food_y.clear()
 
         for _ in range(self.food_num):
-            self.food_pos.append([random.randint(0, self.length), random.randint(0, self.width)])
             self.food_x.append(random.randint(0, self.length))
             self.food_y.append(random.randint(0, self.width))
+            self.food_pos.append([self.food_x[_], self.food_y[_]])
 
     def reset_resources_delayed(self):
         self.food_history.append(self.food_num)
@@ -131,9 +131,9 @@ class Environment():
         self.consumed_food = 0
 
         for _ in range(self.food_num):
-            self.food_pos.append([random.randint(0, self.length), random.randint(0, self.width)])
             self.food_x.append(random.randint(0, self.length))
             self.food_y.append(random.randint(0, self.width))
+            self.food_pos.append([self.food_x[_], self.food_y[_]])
 
     def create_new_generation(self):
 
@@ -246,7 +246,7 @@ class Organism():
         self.food = 0
 
         self.speed = 7
-        self.size = 5
+        self.size = 7
         self.sense = 20
 
         # initial direction
@@ -264,6 +264,10 @@ class Organism():
         elif self.y == env.width:
             self.direction = random.randint(100, 260)
 
+        self.food_found = False
+        self.target_direction = 0
+        self.food_distance = -1
+
     def step(self):
 
         # new location
@@ -271,7 +275,17 @@ class Organism():
         self.y += cos(radians(self.direction))
 
         # new direction
-        self.direction += random.randint(-10, 10)
+        if not self.food_found:
+            self.direction += random.randint(-10, 10)
+            if self.direction >= 360:
+                self.direction = 359
+        else:
+            turn = self.target_direction - self.direction
+
+            if abs(turn) > 40:
+                self.direction += turn/abs(turn)*40
+            else:
+                self.direction = self.target_direction
 
         # make sure that nobody can leave the map
         if self.x < 0:
@@ -294,6 +308,7 @@ class Organism():
                     if self.env.delayed_food_reset:
                         self.env.consumed_food += 1
                     self.food += 1
+                    self.food_found = False
                     # removing it from the map
                     self.env.food_x.pop(food_num)
                     self.env.food_y.pop(food_num)
@@ -302,7 +317,40 @@ class Organism():
     def move(self):
 
         for step in range(self.speed):
+            # forage for food
+            self.look_for_food()
             # change location
             self.step()
-            # forage for food
+            # consume
             self.eat()
+
+    def look_for_food(self):
+
+        for food_num in range(len(self.env.food_pos)-1):
+            if food_num > len(self.env.food_pos) - 1:
+                continue
+            if abs(self.env.food_y[food_num] - self.y) <= self.sense:
+                if abs(self.env.food_x[food_num] - self.x) <= self.sense:
+                    delta_y = self.env.food_y[food_num] - self.y
+                    delta_x = self.env.food_x[food_num] - self.x
+                    new_distance = sqrt(delta_y**2 + delta_x**2)
+
+                    if (new_distance < self.food_distance) or self.food_distance < 0:
+                        if not delta_y == 0:
+                            if delta_x >= 0 and delta_y > 0:
+                                self.target_direction = degrees(atan(delta_x/delta_y))
+                            elif delta_x > 0 and delta_y < 0:
+                                self.target_direction = 90 + degrees(atan((-delta_y)/delta_x))
+                            elif delta_x < 0 and delta_y < 0:
+                                self.target_direction = 180 + degrees(atan(delta_x / delta_y))
+                            elif delta_x < 0 and delta_y > 0:
+                                self.target_direction = 360 + degrees(atan(delta_x / delta_y))
+                        else:
+                            if delta_x > 0:
+                                self.target_direction = 90
+                            else:
+                                self.target_direction = 270
+
+                        self.food_distance = new_distance
+
+                        self.food_found = True
