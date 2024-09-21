@@ -7,7 +7,7 @@ Right now the program allows us to find the population which can be sustained by
 The rules are as follows:
 At first food is randomly distributed all over the map. Its amount can be changed from simulation to simulation.
 The organisms are then loaded along the edges of the map, their positions are also random, each has random direction.
-As the simulation starts the organisms start moving with the pre-set speed while randomly changing direction.
+As the simulation starts the organisms start moving with the pre-set speed while randomly changing direction until the food is found, after that the organism attempts to approcah it.
 If the organism manages to consume
 * 2 or more food items, then instead of it 2 organisms will appear next day. In other words, it reproduces.
 * 1 food item, then it survives.
@@ -15,7 +15,7 @@ If the organism manages to consume
 
 Amount of food does not recover instantly, for example the amount of food in day 7 depends on the amount of food in days 4 and 5. That adds realism to the way our ecosystem behaves. This is repeated for a certain number of days.
 
-Finally, in v4.0.0 the ability to conduct any meaningful experiments is there. We can calculate the carrying capacity of our simplified ecosystem.
+Finally, in v0.4.0 the ability to conduct any meaningful experiments is there. We can calculate the carrying capacity of our simplified ecosystem.
 For example, if we will set the following parameters:
 
 Parameter | Value
@@ -27,13 +27,13 @@ initial population | 50
 
 and run a simulation once we will get the following: 
 
-https://github.com/user-attachments/assets/5978b111-5e34-4a82-b3a7-041abb41caf5
+https://github.com/user-attachments/assets/1396914d-4306-485e-809b-de952b5b85bf
 
-As we can see, the population has fluctuated significantly and while the simulation came to an end with the population of around 35 it is not necessarily the carrying capacity of our mini-world. Since it can be just another fluctuation or just one random outcome. To get the full picture we have to run it several times. Let's say 20:
+As we can see, the population has fluctuated significantly and while the simulation came to an end with the population of around 32 it is not necessarily the carrying capacity of our mini-world. Since it can be just another fluctuation or just one random outcome. To get the full picture we have to run it several times. Let's say 20:
 
-https://github.com/user-attachments/assets/2e2ca1ba-8446-406b-933d-299484877697
+https://github.com/user-attachments/assets/7ecd82bf-d6f6-43df-93c9-6432e7ed5acf
 
-Now, we can see that the environment can sustain, on average, the population of around 35 organisms, thus the carrying capacity is found and the initial guess was randomly correct.
+Now, we can see that the environment can sustain, on average, the population of around 22 organisms, thus the carrying capacity is found and the initial run was extremely misleading.
 
 ## Future development ##
 
@@ -56,4 +56,4 @@ Separate file for visualiations mehtods | Everything related to visualisation sh
 Short-term:
 Feature name | Description 
 -----|---------
-Adding sensing radius for organisms | This will serve as basis for adding mutations in the future. Also, create slightly more intelligent behaviour for the organisms.
+Adding mutations | A major update, will be in v. 0.5.0
