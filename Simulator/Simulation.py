@@ -7,7 +7,7 @@ class Environment():
     def __init__(
             self,
             population_size=10,
-            food_num=15,
+            food_num=100,
             multiple_runs=False,
             plot_environment_=True,
             graph_population=True,
@@ -174,16 +174,21 @@ class Environment():
             self.generations_number = generations_number
             while self.generation < generations_number:
 
-                self.run_day(show_framerate, day_length)
+                if not self.stop:
 
-                if self.day_complete:
-                    self.create_new_generation()
+                    self.run_day(show_framerate, day_length)
 
-                    if self.graph_population:
-                        self.visualisation.graph_population()
+                    if self.day_complete:
+                        self.create_new_generation()
 
-                        if not self.plot_environment_:
-                            self.visualisation.display_figure()
+                        if self.graph_population:
+                            self.visualisation.graph_population()
+
+                            if not self.plot_environment_:
+                                self.visualisation.display_figure()
+
+                else:
+                    return 0
 
     def reset_simulation(self):
 
