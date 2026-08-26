@@ -1,0 +1,11 @@
+[project]
+name = "natural-selection-simulator"
+version = "0.4.5"
+description = "Natural Selection Simulator"
+readme = "ReadMe.md"
+requires-python = ">=3.10"
+dependencies = [
+    "matplotlib",
+    "numpy",
+    "pygame",
+]
