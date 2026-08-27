@@ -12,7 +12,7 @@ class Environment():
             multiple_runs=False,
             plot_environment_=True,
             graph_population=True,
-            delayed_food_reset=True,
+            delayed_food_reset=False,
             backend="pygame",
             fps_limit=30
     ):
