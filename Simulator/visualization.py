@@ -251,6 +251,15 @@ class PygameVisualisation():
                         self.population_stat.lines[self.env.run_num].remove()
                     self.population_stat.plot(self.population_history, linewidth=0.3, color="red")
                     self.population_stat.plot(self.average_population, linewidth=2, color="red")
+
+            if not self.multiple_runs:
+                self.population_stat.fill_between(
+                    range(self.env.generation + 1),
+                    self.population_history,
+                    color="red",
+                    alpha=0.3
+                    )
+            self.population_stat.grid(linewidth=0.2)
                     
             self.figure.canvas.draw_idle()
             self.figure.canvas.flush_events()
