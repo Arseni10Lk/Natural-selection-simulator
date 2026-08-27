@@ -1,6 +1,7 @@
 import random
-from math import radians, degrees, cos, sin, atan, sqrt
+from math import radians, degrees, cos, sin, atan2, sqrt
 from Simulator.visualization import Visualisation
+from Simulator.quadtree import Point, Rectangle, QuadTree
 
 
 class Environment():
@@ -25,9 +26,8 @@ class Environment():
         self.food_num = food_num
         self.initial_food = food_num
 
-        self.food_pos = []
-        self.food_x = []
-        self.food_y = []
+        self.food_items = []
+        self.food_tree = None
         self.reset_resources()
 
         self.consumed_food = 0
@@ -71,8 +71,9 @@ class Environment():
 
     def update_organism_positions(self):
 
-        [creature.move() for creature in self.population]
-
+        for creature in self.population:
+            creature.move()
+        
         self.organism_pos.clear()
         self.organism_x.clear()
         self.organism_y.clear()
@@ -92,21 +93,19 @@ class Environment():
 
     def reset_resources(self):
 
-        self.food_pos.clear()
-        self.food_x.clear()
-        self.food_y.clear()
+        self.food_items = []
+        self.food_tree = QuadTree(Rectangle(self.length/2, self.width/2, self.length/2, self.width/2), 4)
 
         for _ in range(self.food_num):
-            self.food_x.append(random.randint(0, self.length))
-            self.food_y.append(random.randint(0, self.width))
-            self.food_pos.append([self.food_x[_], self.food_y[_]])
+            pt = Point(random.randint(0, self.length), random.randint(0, self.width))
+            self.food_items.append(pt)
+            self.food_tree.insert(pt)
 
     def reset_resources_delayed(self):
         self.food_history.append(self.food_num)
 
-        self.food_pos.clear()
-        self.food_x.clear()
-        self.food_y.clear()
+        self.food_items = []
+        self.food_tree = QuadTree(Rectangle(self.length/2, self.width/2, self.length/2, self.width/2), 4)
 
         if self.generation == 1:
             new_food_count = (self.food_num
@@ -131,9 +130,9 @@ class Environment():
         self.consumed_food = 0
 
         for _ in range(self.food_num):
-            self.food_x.append(random.randint(0, self.length))
-            self.food_y.append(random.randint(0, self.width))
-            self.food_pos.append([self.food_x[_], self.food_y[_]])
+            pt = Point(random.randint(0, self.length), random.randint(0, self.width))
+            self.food_items.append(pt)
+            self.food_tree.insert(pt)
 
     def create_new_generation(self):
 
@@ -193,9 +192,8 @@ class Environment():
     def reset_simulation(self):
 
         # food
-        self.food_pos = []
-        self.food_x = []
-        self.food_y = []
+        self.food_items = []
+        self.food_tree = None
         self.food_num = self.initial_food
         self.food_history = [self.food_num]
         self.reset_resources()
@@ -304,20 +302,19 @@ class Organism():
             self.y = self.env.width
 
     def eat(self):
-
-        for food_num in range(len(self.env.food_pos)-1):
-            if food_num > len(self.env.food_pos) - 1:
-                continue
-            if abs(self.env.food_y[food_num] - self.y) <= 7:
-                if abs(self.env.food_x[food_num] - self.x) <= 7:
+        eat_box = Rectangle(self.x, self.y, 7, 7)
+        nearby_food = self.env.food_tree.query(eat_box)
+        
+        for food in nearby_food:
+            if not food.eaten:
+                dist = sqrt((food.x - self.x)**2 + (food.y - self.y)**2)
+                if dist <= 7:
                     if self.env.delayed_food_reset:
                         self.env.consumed_food += 1
                     self.food += 1
                     self.food_found = False
-                    # removing it from the map
-                    self.env.food_x.pop(food_num)
-                    self.env.food_y.pop(food_num)
-                    self.env.food_pos.pop(food_num)
+                    food.eaten = True
+                    break # Eat one piece at a time if they overlap
 
     def move(self):
 
@@ -330,32 +327,26 @@ class Organism():
             self.eat()
 
     def look_for_food(self):
+        vision_box = Rectangle(self.x, self.y, self.sense, self.sense)
+        nearby_food = self.env.food_tree.query(vision_box)
+        
+        closest_dist = -1
+        closest_food = None
 
-        for food_num in range(len(self.env.food_pos)-1):
-            if food_num > len(self.env.food_pos) - 1:
-                continue
-            if abs(self.env.food_y[food_num] - self.y) <= self.sense:
-                if abs(self.env.food_x[food_num] - self.x) <= self.sense:
-                    delta_y = self.env.food_y[food_num] - self.y
-                    delta_x = self.env.food_x[food_num] - self.x
-                    new_distance = sqrt(delta_y**2 + delta_x**2)
+        for food in nearby_food:
+            if not food.eaten:
+                delta_y = food.y - self.y
+                delta_x = food.x - self.x
+                dist = sqrt(delta_y**2 + delta_x**2)
 
-                    if (new_distance < self.food_distance) or self.food_distance < 0:
-                        if not delta_y == 0:
-                            if delta_x >= 0 and delta_y > 0:
-                                self.target_direction = degrees(atan(delta_x/delta_y))
-                            elif delta_x > 0 and delta_y < 0:
-                                self.target_direction = 90 + degrees(atan((-delta_y)/delta_x))
-                            elif delta_x < 0 and delta_y < 0:
-                                self.target_direction = 180 + degrees(atan(delta_x / delta_y))
-                            elif delta_x < 0 and delta_y > 0:
-                                self.target_direction = 360 + degrees(atan(delta_x / delta_y))
-                        else:
-                            if delta_x > 0:
-                                self.target_direction = 90
-                            else:
-                                self.target_direction = 270
+                if dist <= self.sense:
+                    if closest_dist < 0 or dist < closest_dist:
+                        closest_dist = dist
+                        closest_food = food
 
-                        self.food_distance = new_distance
-
-                        self.food_found = True
+        if closest_food:
+            delta_y = closest_food.y - self.y
+            delta_x = closest_food.x - self.x
+            self.target_direction = degrees(atan2(delta_x, delta_y)) % 360
+            self.food_distance = closest_dist
+            self.food_found = True

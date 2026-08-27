@@ -1,8 +1,7 @@
 import matplotlib.pyplot as plt
 from matplotlib.ticker import MaxNLocator
 import time
-from Simulator.__init__ import version
-
+from Simulator import version
 
 class Visualisation():
     def __init__(self, env):
@@ -45,7 +44,10 @@ class Visualisation():
     def plot_environment(self):
         if self.plot_environment_:
             self.environment_picture.cla()
-            self.environment_picture.scatter(self.env.food_x, self.env.food_y, marker=".", s=3, color="#00C27E")
+            active_foods = [f for f in self.env.food_items if not f.eaten]
+            fx = [f.x for f in active_foods]
+            fy = [f.y for f in active_foods]
+            self.environment_picture.scatter(fx, fy, marker=".", s=3, color="#00C27E")
             self.environment_picture.scatter(self.env.organism_x, self.env.organism_y, s=20, color="#FF9A19")
             self.environment_picture.set_xlim(0, self.env.length)
             self.environment_picture.set_ylim(0, self.env.width)
