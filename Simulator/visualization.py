@@ -130,6 +130,9 @@ class MatplotlibVisualisation():
         else:
             self.population_stat.set_axis_off()
 
+    def on_close(self, event):
+        self.env.stop = True
+
     def display_figure(self, show_framerate=False):
         fps = 0
 
@@ -265,13 +268,35 @@ class PygameVisualisation():
             self.figure.canvas.flush_events()
 
     def show_final_graph(self):
-        if self.plot_environment_:
-            # Close the Pygame window so it doesn't freeze the OS
-            pygame.quit()
-            
+        import matplotlib.pyplot as plt
+        
+        # Connect matplotlib close event so we can detect it
         if self.graph_population_:
-            import matplotlib.pyplot as plt
-            plt.show() # Block the current figure so the graph stays open
+            self.figure.canvas.mpl_connect('close_event', self.on_close)
+            
+        # Keep the final state on screen and poll both event loops
+        while not self.env.stop:
+            if self.plot_environment_:
+                for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
+                        self.env.stop = True
+                        break
+                        
+            if self.graph_population_:
+                # If the matplotlib window is closed, stop
+                if not plt.fignum_exists(self.figure.number):
+                    self.env.stop = True
+                    break
+                self.figure.canvas.draw_idle()
+                self.figure.canvas.flush_events()
+                
+            pygame.time.wait(50) # Sleep 50ms to save CPU
+            
+        if self.plot_environment_:
+            pygame.quit()
+
+    def on_close(self, event):
+        self.env.stop = True
 
     def display_figure(self, show_framerate=False):
         if not self.plot_environment_:
