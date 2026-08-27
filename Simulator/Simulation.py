@@ -1,6 +1,6 @@
 import random
 from math import radians, degrees, cos, sin, atan2, sqrt
-from Simulator.visualization import Visualisation
+from Simulator.visualization import MatplotlibVisualisation, PygameVisualisation
 from Simulator.quadtree import Point, Rectangle, QuadTree
 
 
@@ -12,7 +12,9 @@ class Environment():
             multiple_runs=False,
             plot_environment_=True,
             graph_population=True,
-            delayed_food_reset=True
+            delayed_food_reset=True,
+            backend="pygame",
+            fps_limit=30
     ):
 
         self.population_size = population_size
@@ -54,7 +56,12 @@ class Environment():
         self.graph_population = graph_population
         self.delayed_food_reset = delayed_food_reset
 
-        self.visualisation = Visualisation(self)
+        self.backend = backend
+        self.fps_limit = fps_limit
+        if self.backend == "matplotlib":
+            self.visualisation = MatplotlibVisualisation(self)
+        else:
+            self.visualisation = PygameVisualisation(self)
         self.stop = False
 
     def create_population(self):
@@ -85,6 +92,9 @@ class Environment():
 
     def run_day(self, show_framerate, day_length=40):
         for _ in range(day_length):
+            if self.stop:
+                self.day_complete = False
+                return
             self.update_organism_positions()
             if self.plot_environment_:
                 self.visualisation.plot_environment()
@@ -217,10 +227,14 @@ class Environment():
     def run_several_times(self, times_=20, generations_number=20, day_length=20):
         if not self.stop:
             print("Simulation is running")
-            while self.run_num < times_:
+            while self.run_num < times_ and not self.stop:
                 self.run_simulation(generations_number=generations_number, day_length=day_length)
-                self.reset_simulation()
+                if not self.stop:
+                    self.reset_simulation()
                 self.run_num += 1
+                
+            if not self.stop and hasattr(self.visualisation, 'show_final_graph'):
+                self.visualisation.show_final_graph()
 
 
 class Organism():

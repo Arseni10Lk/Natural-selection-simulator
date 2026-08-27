@@ -2,7 +2,7 @@ import pytest
 from unittest.mock import patch
 from Simulator.Simulation import Environment, Organism
 
-@patch('Simulator.Simulation.Visualisation')
+@patch('Simulator.Simulation.PygameVisualisation')
 def test_environment_initialization(mock_vis):
     # Initialize with small numbers for speed
     env = Environment(population_size=5, food_num=10)
@@ -15,7 +15,7 @@ def test_environment_initialization(mock_vis):
     assert len(env.food_items) == 10
     assert not env.stop
 
-@patch('Simulator.Simulation.Visualisation')
+@patch('Simulator.Simulation.PygameVisualisation')
 def test_create_new_generation_extinction(mock_vis):
     env = Environment(population_size=10, food_num=10)
     
@@ -29,7 +29,7 @@ def test_create_new_generation_extinction(mock_vis):
     assert env.population_size == 0
     assert len(env.population) == 0
 
-@patch('Simulator.Simulation.Visualisation')
+@patch('Simulator.Simulation.PygameVisualisation')
 def test_create_new_generation_survival(mock_vis):
     env = Environment(population_size=10, food_num=10)
     
@@ -43,7 +43,7 @@ def test_create_new_generation_survival(mock_vis):
     assert env.population_size == 10
     assert len(env.population) == 10
 
-@patch('Simulator.Simulation.Visualisation')
+@patch('Simulator.Simulation.PygameVisualisation')
 def test_create_new_generation_explosion(mock_vis):
     env = Environment(population_size=10, food_num=10)
     
@@ -57,7 +57,7 @@ def test_create_new_generation_explosion(mock_vis):
     assert env.population_size == 20
     assert len(env.population) == 20
 
-@patch('Simulator.Simulation.Visualisation')
+@patch('Simulator.Simulation.PygameVisualisation')
 def test_delayed_food_math(mock_vis):
     env = Environment(population_size=10, food_num=100)
     env.generation = 1
