@@ -18,10 +18,34 @@ class Rectangle:
                 self.y - self.h <= point.y <= self.y + self.h)
 
     def intersects(self, range_rect):
+        if isinstance(range_rect, Circle):
+            return range_rect.intersects(self)
+            
         return not (range_rect.x - range_rect.w > self.x + self.w or
                     range_rect.x + range_rect.w < self.x - self.w or
                     range_rect.y - range_rect.h > self.y + self.h or
                     range_rect.y + range_rect.h < self.y - self.h)
+
+class Circle:
+    __slots__ = ['x', 'y', 'r']
+    def __init__(self, x, y, r):
+            self.x = x  # center x
+            self.y = y  # center y
+            self.r = r  # radius
+    def contains(self, point):
+        # Pythagorean theorem (squared) to check true circular distance
+        return (point.x - self.x)**2 + (point.y - self.y)**2 <= self.r**2
+    
+    def intersects(self, range_rect):
+            # Find the closest X and Y point on the rectangle to the circle's center
+            closest_x = max(range_rect.x - range_rect.w, min(self.x, range_rect.x + range_rect.w))
+            closest_y = max(range_rect.y - range_rect.h, min(self.y, range_rect.y + range_rect.h))
+
+            # Calculate the squared distance from the circle center to that closest point
+            distance_x = self.x - closest_x
+            distance_y = self.y - closest_y
+
+            return (distance_x**2 + distance_y**2) <= self.r**2
 
 class QuadTree:
     def __init__(self, boundary, capacity):

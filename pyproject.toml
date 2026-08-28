@@ -6,6 +6,7 @@ readme = "ReadMe.md"
 requires-python = ">=3.10"
 dependencies = [
     "matplotlib",
+    "neat-python>=2.0.0",
     "numpy",
     "pygame",
 ]

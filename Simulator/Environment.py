@@ -1,8 +1,10 @@
 import random
 from math import radians, degrees, cos, sin, atan2, sqrt
 from Simulator.visualization import MatplotlibVisualisation, PygameVisualisation
-from Simulator.quadtree import Point, Rectangle, QuadTree
+from Simulator.quadtree import Point, Rectangle, QuadTree, Circle
 
+
+from Simulator.Organism import Organism
 
 class Environment():
     def __init__(
@@ -21,8 +23,8 @@ class Environment():
         self.initial_population = population_size
 
         # size
-        self.length = 500  # x
-        self.width = 250  # y
+        self.length = 800  # x
+        self.width = 500  # y
 
         # food
         self.food_num = food_num
@@ -67,7 +69,7 @@ class Environment():
     def create_population(self):
 
         for _ in range(self.population_size):
-            self.population.append(Organism(self))
+            self.population.append(Organism(self, brain=None))
 
     def get_organism_positions(self):
 
@@ -163,11 +165,11 @@ class Environment():
 
         for creature in survivors:
             if creature.food >= 2:
-                self.population.append(Organism(self))
-                self.population.append(Organism(self))
+                self.population.append(Organism(self, brain=creature.brain))
+                self.population.append(Organism(self, brain=creature.brain))
                 self.population_size += 1
             if creature.food == 1:
-                self.population.append(Organism(self))
+                self.population.append(Organism(self, brain=creature.brain))
 
         if self.delayed_food_reset:
             self.reset_resources_delayed()
@@ -237,130 +239,3 @@ class Environment():
                 self.visualisation.show_final_graph()
 
 
-class Organism():
-    def __init__(self, env, parent=None):
-        self.env = env
-
-        # initial location
-        linear_loc = random.randint(0, env.length*2+env.width*2)
-        self.x = 0
-        self.y = 0
-        if linear_loc <= env.length:
-            self.x = linear_loc
-            self.y = 0
-        elif linear_loc <= env.length + env.width:
-            self.x = env.length
-            self.y = linear_loc - env.length
-        elif linear_loc <= env.length*2 + env.width:
-            self.x = linear_loc - (env.length + env.width)
-            self.y = env.width
-        elif linear_loc <= env.length*2 + env.width*2:
-            self.x = 0
-            self.y = linear_loc - (env.length*2 + env.width)
-        else:
-            raise Exception("Error while obtaining organism position")
-
-        self.food = 0
-
-        self.speed = 7
-        self.size = 7
-        self.sense = 20
-
-        # initial direction
-        """
-        all angles are in degrees,
-        measured from the north (positive y) clockwise
-        in short, are azimuthal
-        """
-        if self.x == 0:
-            self.direction = random.randint(10, 170)
-        elif self.y == 0:
-            self.direction = random.choice((random.randint(280, 360), random.randint(0, 80)))
-        elif self.x == env.length:
-            self.direction = random.randint(190, 350)
-        elif self.y == env.width:
-            self.direction = random.randint(100, 260)
-
-        self.food_found = False
-        self.target_direction = 0
-        self.food_distance = -1
-
-    def step(self):
-
-        # new location
-        self.x += sin(radians(self.direction))
-        self.y += cos(radians(self.direction))
-
-        # new direction
-        if not self.food_found:
-            self.direction += random.randint(-10, 10)
-            if self.direction >= 360:
-                self.direction = 359
-        else:
-            turn = self.target_direction - self.direction
-
-            if abs(turn) > 40:
-                self.direction += turn/abs(turn)*40
-            else:
-                self.direction = self.target_direction
-
-        # make sure that nobody can leave the map
-        if self.x < 0:
-            self.x = 0
-        elif self.x > self.env.length:
-            self.x = self.env.length
-
-        if self.y < 0:
-            self.y = 0
-        elif self.y > self.env.width:
-            self.y = self.env.width
-
-    def eat(self):
-        eat_box = Rectangle(self.x, self.y, 7, 7)
-        nearby_food = self.env.food_tree.query(eat_box)
-        
-        for food in nearby_food:
-            if not food.eaten:
-                dist = sqrt((food.x - self.x)**2 + (food.y - self.y)**2)
-                if dist <= 7:
-                    if self.env.delayed_food_reset:
-                        self.env.consumed_food += 1
-                    self.food += 1
-                    self.food_found = False
-                    food.eaten = True
-                    break # Eat one piece at a time if they overlap
-
-    def move(self):
-
-        for step in range(self.speed):
-            # forage for food
-            self.look_for_food()
-            # change location
-            self.step()
-            # consume
-            self.eat()
-
-    def look_for_food(self):
-        vision_box = Rectangle(self.x, self.y, self.sense, self.sense)
-        nearby_food = self.env.food_tree.query(vision_box)
-        
-        closest_dist = -1
-        closest_food = None
-
-        for food in nearby_food:
-            if not food.eaten:
-                delta_y = food.y - self.y
-                delta_x = food.x - self.x
-                dist = sqrt(delta_y**2 + delta_x**2)
-
-                if dist <= self.sense:
-                    if closest_dist < 0 or dist < closest_dist:
-                        closest_dist = dist
-                        closest_food = food
-
-        if closest_food:
-            delta_y = closest_food.y - self.y
-            delta_x = closest_food.x - self.x
-            self.target_direction = degrees(atan2(delta_x, delta_y)) % 360
-            self.food_distance = closest_dist
-            self.food_found = True
