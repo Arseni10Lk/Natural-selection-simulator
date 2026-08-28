@@ -37,6 +37,7 @@ def main():
         plot_environment_=True,
         graph_population=True,
         backend="pygame",
+        delayed_food_reset=True,
         fps_limit=20
     )
     
