@@ -1,23 +1,15 @@
+from __future__ import annotations
+
 import random
-from math import radians, degrees, cos, sin, atan2, sqrt
-from Simulator.visualization import MatplotlibVisualisation, PygameVisualisation
-from Simulator.quadtree import Point, Rectangle, QuadTree, Circle
+from typing import Any
+
+from simulator.organism import Organism
+from simulator.quadtree import Point, QuadTree, Rectangle
+from simulator.visualization import MatplotlibVisualisation, PygameVisualisation
 
 
-from Simulator.Organism import Organism
-
-class Environment():
-    def __init__(
-            self,
-            population_size=10,
-            food_num=100,
-            multiple_runs=False,
-            plot_environment_=True,
-            graph_population=True,
-            delayed_food_reset=False,
-            backend="pygame",
-            fps_limit=30
-    ):
+class Environment:
+    def __init__(self, population_size: int = 10, food_num: int = 100, multiple_runs: bool = False, plot_environment_: bool = True, graph_population: bool = True, delayed_food_reset: bool = False, backend: str = "pygame", fps_limit: int = 30) -> None:
 
         self.population_size = population_size
         self.initial_population = population_size
@@ -30,21 +22,21 @@ class Environment():
         self.food_num = food_num
         self.initial_food = food_num
 
-        self.food_items = []
-        self.food_tree = None
+        self.food_items: list[Any] = []
+        self.food_tree: Any = None
         self.reset_resources()
 
         self.consumed_food = 0
         self.food_history = [self.food_num]
 
         # population
-        self.population = []
+        self.population: list[Any] = []
         self.create_population()
 
         # organism positions
-        self.organism_pos = []
-        self.organism_x = []
-        self.organism_y = []
+        self.organism_pos: list[Any] = []
+        self.organism_x: list[Any] = []
+        self.organism_y: list[Any] = []
         self.get_organism_positions()
 
         self.generation = 0
@@ -61,24 +53,24 @@ class Environment():
         self.backend = backend
         self.fps_limit = fps_limit
         if self.backend == "matplotlib":
-            self.visualisation = MatplotlibVisualisation(self)
+            self.visualisation: Any = MatplotlibVisualisation(self)
         else:
             self.visualisation = PygameVisualisation(self)
         self.stop = False
 
-    def create_population(self):
+    def create_population(self) -> None:
 
         for _ in range(self.population_size):
             self.population.append(Organism(self, brain=None))
 
-    def get_organism_positions(self):
+    def get_organism_positions(self) -> None:
 
         for n in range(self.population_size):
             self.organism_pos.append([self.population[n].x, self.population[n].y])
             self.organism_x.append(self.population[n].x)
             self.organism_y.append(self.population[n].y)
 
-    def update_organism_positions(self):
+    def update_organism_positions(self) -> None:
 
         for creature in self.population:
             creature.move()
@@ -92,7 +84,7 @@ class Environment():
             self.organism_x.append(self.population[n].x)
             self.organism_y.append(self.population[n].y)
 
-    def run_day(self, show_framerate, day_length=40):
+    def run_day(self, show_framerate: bool = False, day_length: int = 40) -> None:
         for _ in range(day_length):
             if self.stop:
                 self.day_complete = False
@@ -103,9 +95,9 @@ class Environment():
                 self.visualisation.display_figure(show_framerate=show_framerate)
         self.day_complete = True
 
-    def reset_resources(self):
+    def reset_resources(self) -> None:
 
-        self.food_items = []
+        self.food_items: list[Any] = []  # type: ignore
         self.food_tree = QuadTree(Rectangle(self.length/2, self.width/2, self.length/2, self.width/2), 4)
 
         for _ in range(self.food_num):
@@ -113,10 +105,10 @@ class Environment():
             self.food_items.append(pt)
             self.food_tree.insert(pt)
 
-    def reset_resources_delayed(self):
+    def reset_resources_delayed(self) -> None:
         self.food_history.append(self.food_num)
 
-        self.food_items = []
+        self.food_items: list[Any] = []  # type: ignore
         self.food_tree = QuadTree(Rectangle(self.length/2, self.width/2, self.length/2, self.width/2), 4)
 
         if self.generation == 1:
@@ -125,14 +117,14 @@ class Environment():
                               )
         elif self.generation == 2:
             food_change = 0.4 * self.food_history[self.generation - 1]
-            new_food_count = (self.food_num
+            new_food_count = (self.food_num  # type: ignore
                               - self.consumed_food
                               + 0.5 * food_change)
         else:
             food_change1 = 0.4 * self.food_history[self.generation - 1]
             food_change2 = 0.4 * self.food_history[self.generation - 2]
             new_food_count = (
-                    self.food_num
+                    self.food_num  # type: ignore
                     - self.consumed_food
                     + 0.5 * food_change1
                     + 0.5 * food_change2
@@ -146,7 +138,7 @@ class Environment():
             self.food_items.append(pt)
             self.food_tree.insert(pt)
 
-    def create_new_generation(self):
+    def create_new_generation(self) -> None:
 
         self.generation += 1
 
@@ -178,7 +170,7 @@ class Environment():
 
         self.day_complete = False
 
-    def run_simulation(self, show_framerate=False, generations_number=20, day_length=20):
+    def run_simulation(self, show_framerate: bool = False, generations_number: int = 20, day_length: int = 20) -> None:
         if not self.stop:
             if not self.multiple_runs:
                 print("Simulation is running ...")
@@ -201,24 +193,24 @@ class Environment():
                 else:
                     return 0
 
-    def reset_simulation(self):
+    def reset_simulation(self) -> None:
 
         # food
-        self.food_items = []
-        self.food_tree = None
+        self.food_items: list[Any] = []  # type: ignore
+        self.food_tree: Any = None  # type: ignore
         self.food_num = self.initial_food
         self.food_history = [self.food_num]
         self.reset_resources()
 
         # population
         self.population_size = self.initial_population
-        self.population = []
+        self.population: list[Any] = []  # type: ignore
         self.create_population()
 
         # organism positions
-        self.organism_pos = []
-        self.organism_x = []
-        self.organism_y = []
+        self.organism_pos: list[Any] = []  # type: ignore
+        self.organism_x: list[Any] = []  # type: ignore
+        self.organism_y: list[Any] = []  # type: ignore
         self.get_organism_positions()
 
         self.generation = 0
@@ -226,7 +218,7 @@ class Environment():
 
         self.visualisation.past_population_history.append([self.initial_population])
 
-    def run_several_times(self, times_=20, generations_number=20, day_length=20):
+    def run_several_times(self, times_: int = 20, generations_number: int = 20, day_length: int = 20) -> None:
         if not self.stop:
             print("Simulation is running")
             while self.run_num < times_ and not self.stop:

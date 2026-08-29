@@ -1,5 +1,5 @@
-import pytest
-from Simulator.quadtree import QuadTree, Rectangle, Point
+from simulator.quadtree import Point, QuadTree, Rectangle
+
 
 def test_insert_out_of_bounds():
     qt = QuadTree(Rectangle(50, 50, 50, 50), 4) # x:0-100, y:0-100

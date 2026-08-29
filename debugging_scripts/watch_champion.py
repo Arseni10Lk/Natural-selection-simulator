@@ -1,12 +1,14 @@
 import os
-import sys
-import neat
 import pickle
+import sys
 
-# Add root directory to sys.path so we can import Simulator
+import neat
+
+# Add root directory to sys.path so we can import simulator
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from Simulator.Environment import Environment
-from Simulator.Organism import Organism
+from simulator.environment import Environment
+from simulator.organism import Organism
+
 
 def main():
     # Point to the config in the Simulator folder

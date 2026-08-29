@@ -1,10 +1,14 @@
 import os
-import neat
 import pickle
-from Simulator.Environment import Environment
-from Simulator.Organism import Organism
+from typing import Any
 
-def eval_genomes(genomes, config):
+import neat  # type: ignore
+
+from simulator.environment import Environment
+from simulator.organism import Organism
+
+
+def eval_genomes(genomes: list[tuple[int, Any]], config: neat.Config) -> None:
     env = Environment(
         population_size=len(genomes),
         food_num=100,
@@ -34,7 +38,7 @@ def eval_genomes(genomes, config):
         org.genome.fitness += org.food
         org.genome.fitness += min(0.5, 1 / (org.food_distance + 0.1))
 
-def main():
+def main() -> None:
     local_dir = os.path.dirname(__file__)
     config_path = os.path.join(local_dir, 'config-natural-selection.txt')
 

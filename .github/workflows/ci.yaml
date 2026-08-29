@@ -33,3 +33,9 @@ jobs:
         
       - name: Run Pytest
         run: uv run pytest tests/
+
+      - name: Run ruff check
+        run: uv run ruff check
+
+      - name: Run mypy check
+        run: uv run mypy .

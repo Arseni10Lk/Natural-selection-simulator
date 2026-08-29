@@ -1,7 +1,8 @@
-import pytest
 import math
-from Simulator.Simulation import Organism
-from Simulator.quadtree import QuadTree, Rectangle, Point
+
+from simulator.organism import Organism
+from simulator.quadtree import Point, QuadTree, Rectangle
+
 
 class MockEnvironment:
     def __init__(self):
@@ -13,7 +14,7 @@ class MockEnvironment:
 
 def test_map_boundaries():
     env = MockEnvironment()
-    org = Organism(env)
+    org = Organism(env, brain=None)
     
     # Force organism out of bounds manually
     org.x = -10
@@ -28,7 +29,7 @@ def test_map_boundaries():
 
 def test_trigonometry_atan2():
     env = MockEnvironment()
-    org = Organism(env)
+    org = Organism(env, brain=None)
     org.x = 100
     org.y = 100
     
@@ -62,7 +63,7 @@ def test_trigonometry_atan2():
 
 def test_eating_hitbox_edge_cases():
     env = MockEnvironment()
-    org = Organism(env)
+    org = Organism(env, brain=None)
     org.x = 100
     org.y = 100
     
@@ -84,7 +85,7 @@ def test_eating_hitbox_edge_cases():
 
 def test_tunnel_vision():
     env = MockEnvironment()
-    org = Organism(env)
+    org = Organism(env, brain=None)
     org.x = 100
     org.y = 100
     org.sense = 20

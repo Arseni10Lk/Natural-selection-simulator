@@ -1,12 +1,16 @@
-import matplotlib.pyplot as plt
-from matplotlib.ticker import MaxNLocator
 import time
-from Simulator import version
-import pygame
-import numpy as np
+from typing import Any
 
-class MatplotlibVisualisation():
-    def __init__(self, env):
+import matplotlib.pyplot as plt
+import numpy as np
+import pygame
+from matplotlib.ticker import MaxNLocator
+
+from simulator import version
+
+
+class MatplotlibVisualisation:
+    def __init__(self, env: "Any") -> None:
 
         self.env = env
 
@@ -19,7 +23,7 @@ class MatplotlibVisualisation():
 
         self.population_history = [self.env.population_size]
         self.past_population_history = [self.population_history]
-        self.average_population = []
+        self.average_population: list[Any] = []
 
         self.figure = plt.figure(figsize=(9, 6), layout='constrained')
         plt.show(block=False)
@@ -51,7 +55,7 @@ class MatplotlibVisualisation():
 
         self.figure.canvas.mpl_connect('close_event', self.on_close)
 
-    def plot_environment(self):
+    def plot_environment(self):  # type: ignore
         if self.plot_environment_:
             active_foods = [f for f in self.env.food_items if not f.eaten]
             if active_foods:
@@ -66,7 +70,7 @@ class MatplotlibVisualisation():
         else:
             self.environment_picture.set_axis_off()
 
-    def graph_population(self):
+    def graph_population(self) -> None:
         if self.graph_population_:
             self.population_history = self.past_population_history[self.env.run_num]
             self.population_history.append(self.env.population_size)
@@ -134,18 +138,15 @@ class MatplotlibVisualisation():
         else:
             self.population_stat.set_axis_off()
 
-    def on_close(self, event):
-        self.env.stop = True
-
-    def display_figure(self, show_framerate=False):
+    def display_figure(self, show_framerate: bool = False) -> None:
         fps = 0
 
         if show_framerate:
-            self.end_time = time.time()
+            self.end_time = time.time()  # type: ignore
             if self.start_time != 0:
-                fps = 1 / (self.end_time - self.start_time)
+                fps = 1 / (self.end_time - self.start_time)  # type: ignore
 
-            self.start_time = time.time()
+            self.start_time = time.time()  # type: ignore
             txt = self.textfield.text(0, 0.8, f"fps: {fps:.0f}")
 
             self.figure.canvas.draw_idle()
@@ -156,17 +157,17 @@ class MatplotlibVisualisation():
             self.figure.canvas.draw_idle()
             self.figure.canvas.flush_events()
 
-    def on_close(self, event):
+    def on_close(self, event: "Any") -> None:
         print("Was closed")
         self.env.stop = True
 
 
 
-    def show_final_graph(self):
+    def show_final_graph(self) -> None:
         plt.show()
 
-class PygameVisualisation():
-    def __init__(self, env):
+class PygameVisualisation:
+    def __init__(self, env: "Any") -> None:
         self.env = env
         self.plot_environment_ = self.env.plot_environment_
         self.graph_population_ = self.env.graph_population
@@ -177,7 +178,7 @@ class PygameVisualisation():
         
         self.population_history = [self.env.population_size]
         self.past_population_history = [self.population_history]
-        self.average_population = []
+        self.average_population: list[Any] = []
         
         if self.plot_environment_:
             pygame.init()
@@ -193,7 +194,7 @@ class PygameVisualisation():
             self.population_stat = self.figure.add_subplot(111)
             plt.show(block=False)
 
-    def plot_environment(self):
+    def plot_environment(self):  # type: ignore
         if not self.plot_environment_:
             return
             
@@ -208,7 +209,7 @@ class PygameVisualisation():
         for i in range(len(self.env.organism_x)):
             pygame.draw.circle(self.screen, (255, 154, 25), (int(self.env.organism_x[i] * 2), int(self.env.organism_y[i] * 2)), 4)
             
-    def graph_population(self):
+    def graph_population(self) -> None:
         if self.graph_population_:
             self.population_history = self.past_population_history[self.env.run_num]
             self.population_history.append(self.env.population_size)
@@ -275,7 +276,7 @@ class PygameVisualisation():
             self.figure.canvas.draw_idle()
             self.figure.canvas.flush_events()
 
-    def show_final_graph(self):
+    def show_final_graph(self) -> None:
         import matplotlib.pyplot as plt
         
         # Connect matplotlib close event so we can detect it
@@ -303,10 +304,10 @@ class PygameVisualisation():
         if self.plot_environment_:
             pygame.quit()
 
-    def on_close(self, event):
+    def on_close(self, event: "Any") -> None:
         self.env.stop = True
 
-    def display_figure(self, show_framerate=False):
+    def display_figure(self, show_framerate: bool = False) -> None:
         if not self.plot_environment_:
             return
             

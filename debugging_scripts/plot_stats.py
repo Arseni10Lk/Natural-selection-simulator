@@ -1,7 +1,8 @@
-import pickle
-import matplotlib.pyplot as plt
 import os
-import sys
+import pickle
+
+import matplotlib.pyplot as plt
+
 
 def main():
     local_dir = os.path.dirname(__file__)
