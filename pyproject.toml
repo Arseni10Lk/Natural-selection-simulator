@@ -5,6 +5,8 @@ description = "Natural Selection Simulator"
 readme = "ReadMe.md"
 requires-python = ">=3.10"
 dependencies = [
+    "imageio>=2.37.4",
+    "imageio-ffmpeg>=0.6.0",
     "matplotlib",
     "neat-python>=2.0.0",
     "numpy",

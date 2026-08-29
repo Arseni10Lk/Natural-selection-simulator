@@ -11,9 +11,9 @@ from simulator.organism import Organism
 
 
 def main():
-    # Point to the config in the Simulator folder
+    # Point to the config in the simulator folder
     local_dir = os.path.dirname(__file__)
-    config_path = os.path.abspath(os.path.join(local_dir, '..', 'Simulator', 'config-natural-selection.txt'))
+    config_path = os.path.abspath(os.path.join(local_dir, '..', 'simulator', 'config-natural-selection.txt'))
     
     config = neat.Config(neat.DefaultGenome, neat.DefaultReproduction,
                          neat.DefaultSpeciesSet, neat.DefaultStagnation,
@@ -40,7 +40,8 @@ def main():
         graph_population=True,
         backend="pygame",
         delayed_food_reset=True,
-        fps_limit=20
+        fps_limit=20,
+        record=False,
     )
     
     env.population.clear()
@@ -53,7 +54,7 @@ def main():
 
     env.population_size = 10
 
-    env.run_simulation()
+    env.run_simulation(day_length=50)
 
 if __name__ == "__main__":
     main()

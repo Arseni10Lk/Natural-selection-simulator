@@ -9,7 +9,18 @@ from simulator.visualization import MatplotlibVisualisation, PygameVisualisation
 
 
 class Environment:
-    def __init__(self, population_size: int = 10, food_num: int = 100, multiple_runs: bool = False, plot_environment_: bool = True, graph_population: bool = True, delayed_food_reset: bool = False, backend: str = "pygame", fps_limit: int = 30) -> None:
+    def __init__(
+            self, 
+            population_size: int = 10, 
+            food_num: int = 100, 
+            multiple_runs: bool = False, 
+            plot_environment_: bool = True, 
+            graph_population: bool = True, 
+            delayed_food_reset: bool = False, 
+            backend: str = "pygame", 
+            fps_limit: int = 30, 
+            record: bool = False
+    ) -> None:
 
         self.population_size = population_size
         self.initial_population = population_size
@@ -52,6 +63,7 @@ class Environment:
 
         self.backend = backend
         self.fps_limit = fps_limit
+        self.record = record
         if self.backend == "matplotlib":
             self.visualisation: Any = MatplotlibVisualisation(self)
         else:
@@ -192,6 +204,11 @@ class Environment:
 
                 else:
                     return 0
+            if not self.multiple_runs and hasattr(self.visualisation, 'show_final_graph'):
+                self.visualisation.show_final_graph()
+            if hasattr(self.visualisation, 'close'):
+                self.visualisation.close()
+
 
     def reset_simulation(self) -> None:
 

@@ -54,18 +54,27 @@ def main() -> None:
     stats = neat.StatisticsReporter()
     p.add_reporter(stats)
 
+    # Set up log paths robustly
+    logs_dir = os.path.abspath(os.path.join(local_dir, '..', 'logs'))
+    checkpoints_dir = os.path.join(logs_dir, 'checkpoints')
+    os.makedirs(checkpoints_dir, exist_ok=True)
+    
+    checkpoint_prefix = os.path.join(checkpoints_dir, 'checkpoint-')
+    
     # checkpoint helps also
-    p.add_reporter(neat.Checkpointer(50, filename_prefix='logs/checkpoints/checkpoint-'))
+    p.add_reporter(neat.Checkpointer(50, filename_prefix=checkpoint_prefix))
     
     print("Starting NEAT Evolution...")
     winner = p.run(eval_genomes, 100)
 
     print("Saving the Champion...")
-    with open("logs/champion_brain.pkl", "wb") as f:
+    champion_path = os.path.join(logs_dir, 'champion_brain.pkl')
+    with open(champion_path, "wb") as f:
         pickle.dump(winner, f)
 
     print("Saving the Statistics...")
-    with open("logs/evolution_stats.pkl", "wb") as f:
+    stats_path = os.path.join(logs_dir, 'evolution_stats.pkl')
+    with open(stats_path, "wb") as f:
         pickle.dump(stats, f)
 
 if __name__ == "__main__":

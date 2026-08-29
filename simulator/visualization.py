@@ -22,6 +22,18 @@ class MatplotlibVisualisation:
         self.end_time = 0
 
         self.population_history = [self.env.population_size]
+        self.video_writer = None
+        if getattr(self.env, "record", False):
+            try:
+                import os
+
+                import imageio
+                os.makedirs("logs", exist_ok=True)
+                fps = self.env.fps_limit if self.env.fps_limit > 0 else 60
+                self.video_writer = imageio.get_writer("logs/simulation_recording.mp4", fps=fps, macro_block_size=None)
+            except ImportError:
+                print("Warning: imageio not installed. Cannot record video.")
+
         self.past_population_history = [self.population_history]
         self.average_population: list[Any] = []
 
@@ -160,10 +172,14 @@ class MatplotlibVisualisation:
     def on_close(self, event: "Any") -> None:
         print("Was closed")
         self.env.stop = True
-
-
-
+        
     def show_final_graph(self) -> None:
+        if getattr(self.env, "record", False):
+            import os
+            local_dir = os.path.dirname(__file__)
+            plot_path = os.path.abspath(os.path.join(local_dir, '..', 'logs', 'population_graph.png'))
+            self.figure.savefig(plot_path, dpi=300)
+            print(f"Population graph saved to: {os.path.relpath(plot_path)}")
         plt.show()
 
 class PygameVisualisation:
@@ -177,6 +193,18 @@ class PygameVisualisation:
         self.end_time = 0
         
         self.population_history = [self.env.population_size]
+        self.video_writer = None
+        if getattr(self.env, "record", False):
+            try:
+                import os
+
+                import imageio
+                os.makedirs("logs", exist_ok=True)
+                fps = self.env.fps_limit if self.env.fps_limit > 0 else 60
+                self.video_writer = imageio.get_writer("logs/simulation_recording.mp4", fps=fps, macro_block_size=None)
+            except ImportError:
+                print("Warning: imageio not installed. Cannot record video.")
+
         self.past_population_history = [self.population_history]
         self.average_population: list[Any] = []
         
@@ -279,9 +307,14 @@ class PygameVisualisation:
     def show_final_graph(self) -> None:
         import matplotlib.pyplot as plt
         
-        # Connect matplotlib close event so we can detect it
         if self.graph_population_:
             self.figure.canvas.mpl_connect('close_event', self.on_close)
+            if getattr(self.env, "record", False):
+                import os
+                local_dir = os.path.dirname(__file__)
+                plot_path = os.path.abspath(os.path.join(local_dir, '..', 'logs', 'population_graph.png'))
+                self.figure.savefig(plot_path, dpi=300)
+                print(f"Population graph saved to: {os.path.relpath(plot_path)}")
             
         # Keep the final state on screen and poll both event loops
         while not self.env.stop:
@@ -335,4 +368,16 @@ class PygameVisualisation:
         self.screen.blit(version_text, (self.width - 80, 10))
         
         pygame.display.flip()
+        if getattr(self.env, "record", False) and getattr(self, "video_writer", None) is not None:
+            view = pygame.surfarray.array3d(self.screen)
+            view = view.transpose([1, 0, 2])
+            self.video_writer.append_data(view)  # type: ignore
+
         self.clock.tick(self.env.fps_limit) # Cap at user-defined FPS
+
+
+    def close(self) -> None:
+        if getattr(self, "video_writer", None) is not None:
+            self.video_writer.close()  # type: ignore
+            print("Video saved to logs/simulation_recording.mp4")
+            self.video_writer = None
