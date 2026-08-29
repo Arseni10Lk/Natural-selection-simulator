@@ -15,6 +15,11 @@ The core simulation runs on a few simple rules:
 
 By adjusting the initial parameters, we can observe how the population naturally finds its carrying capacity over multiple generations.
 
+## Demo
+
+<img width="600" height=auto alt="image showing species' fitness" src="https://github.com/user-attachments/assets/727c9369-83a9-4683-bf5b-e0aca2d04e18" />
+
+
 ## 🧠 Technical Features
 
 - **NeuroEvolution (NEAT):** Organisms are controlled by a Neural Network powered by `neat-python`. The network takes in sensory data (vision distance, angles, and speed) and outputs continuous motor controls (acceleration and steering). The networks evolve over generations to optimize hunting strategies.
