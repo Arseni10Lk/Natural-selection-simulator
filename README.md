@@ -37,7 +37,7 @@ https://github.com/user-attachments/assets/13804cda-b907-47dc-a3f5-70800b0f9ed2
 - **NeuroEvolution (NEAT):** Organisms are controlled by a Neural Network powered by `neat-python`. The network takes in sensory data (vision distance, angles, and speed) and outputs continuous motor controls (acceleration and steering). The networks evolve over generations to optimize hunting strategies.
 - **QuadTree Spatial Partitioning:** To support denser population ecosystems efficiently, the simulator relies on a QuadTree data structure for $O(n \log n)$ collision detection and visual range-finding.
 - **Trigonometric Physics:** Organisms calculate relative food angles using `atan2` and steer dynamically using `sin/cos` velocity vectors.
-- **Data Visualization:** Real-time Matplotlib integration that tracks population carrying-capacity, genetic lineages, and species branching in live charts alongside the Pygame physics simulation.
+- **Data Visualization:** Real-time Matplotlib integration that tracks population statistics alongside the Pygame environment visualization.
 
 ## 🚀 Installation & Usage
 
