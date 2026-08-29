@@ -2,7 +2,7 @@ import os
 import pickle
 import sys
 
-import neat
+import neat  # type: ignore
 
 # Add root directory to sys.path so we can import simulator
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
