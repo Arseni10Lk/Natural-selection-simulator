@@ -47,13 +47,11 @@ def main():
     plotted_species = False
     for species_id, (gens, fits) in species_history.items():
         label = "Species Average" if not plotted_species else None
-        # Pick a distinct color based on the species ID
         line_color = cmap(species_id % 20)
         
-        # Plot the species line
         plt.plot(gens, fits, color=line_color, alpha=0.6, linewidth=2, label=label)
         
-        # Add a dot at the start to show when the species was created
+        
         plt.scatter(gens[0], fits[0], color=line_color, s=20, zorder=5)
         
         plotted_species = True
@@ -64,6 +62,7 @@ def main():
     plt.title("NEAT Evolution Progress by Species", fontsize=16)
     plt.xlabel("Generation", fontsize=12)
     plt.ylabel("Average Fitness (Food Eaten)", fontsize=12)
+    plt.xlim(0, len(gen_stats))
     plt.grid(True, linestyle="--", alpha=0.6)
     
     # Clean up duplicate labels in the legend
@@ -73,6 +72,11 @@ def main():
     
     print("Graph generated! Close the window to exit.")
     plt.tight_layout()
+
+    plot_path = os.path.join(local_dir, "..", "logs", "evolution_plot.png")
+    plt.savefig(plot_path, dpi=300)
+    print(f"Graph saved automatically to: {os.path.relpath(plot_path)}")
+
     plt.show()
 
 if __name__ == "__main__":
